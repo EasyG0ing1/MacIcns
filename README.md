@@ -6,7 +6,7 @@ MacICNS is a Java program that will convert any 1024 x 1024 png file into a prop
 
 It's fairly simply, click on the releases link at the right and download the program and install it.
 
-You can use it in either of two ways. If you launch the program without passing in a path for your png file, it will launch the GUI where you can select the file then convert it.
+You can use it in either of two ways. If you launch the program without passing in a path to your png file, it will launch the GUI where you can select the file then convert it.
 
 OR, if you prefer, you can use it from Terminal by passing in the path of your png file and it will kick out a properly created icns file.
 
@@ -27,7 +27,7 @@ Java libraries are compiled into the app package so no need to install Java.
 
 ## How it works
 
-The program takes you 1024 x 1024 png file and it creates a folder where it then converts your image into the different sizes that are needed for the final `.icns` file. Then it calls `iconutil` to do the conversion. It will use the origianl name of your file but it will have `.icns` as the extension name and it will drop it into the same folder that your PNG file is in.
+The program takes your 1024 x 1024 png file and it creates a folder where it then converts your image into the different sizes that are needed for the final `.icns` file. Then it calls `iconutil` to do the conversion. It will use the origianl name of your file but it will have `.icns` as the extension name and it will drop it into the same folder that your PNG file is in.
 
 Thats it!
 
