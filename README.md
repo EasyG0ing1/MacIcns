@@ -1,4 +1,4 @@
-![Logo](./icns/logo.png)
+![Logo](./img/Logo.png)
 
 MacICNS is a Java program that will convert any 1024 x 1024 png file into a proper MacOS .icns file.
 
