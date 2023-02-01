@@ -7,11 +7,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class Run implements Runnable {
 
-	private Path iconFolder;
-	private Path outPath;
+	private final Path iconFolder;
+	private final Path outPath;
 
 	private final String command = "iconutil -c icns %s -o %s";
 
@@ -21,13 +22,11 @@ public class Run implements Runnable {
 		List<String> pathList = new ArrayList<>(Arrays.stream(paths.split(":")).toList());
 		for (String path : pathList) {
 			shell = new File(path, "bash");
-			if (shell.exists())
-				break;
+			if (shell.exists()) {break;}
 			shell = new File(path, "zsh");
-			if (shell.exists())
-				break;
+			if (shell.exists()) {break;}
 		}
-		if(!shell.exists()) {
+		if (!shell.exists()) {
 			shell = new File("/usr/local/bin/bash");
 		}
 		if (shell.exists()) {
@@ -51,20 +50,26 @@ public class Run implements Runnable {
 		command[0] = findBash();
 		command[1] = "-c";
 		command[2] = String.format(this.command, iconFolder.toString(), outPath.toString());
-		ProcessBuilder pb      = new ProcessBuilder(command);
+		ProcessBuilder pb = new ProcessBuilder(command);
 		try {
-			Process        process = pb.start();
-			Scanner        scanner = new Scanner(process.getErrorStream());
+			Process process = pb.start();
+			Scanner scanner = new Scanner(process.getErrorStream());
 			while (scanner.hasNext()) {
 				doNothing();
 			}
 		}
 		catch (IOException e) {
+			System.out.println("There was an error. If the following information does not help you figure out the problem, copy and paste the text below the line and create an issue on https://github.com/EasyG0ing1/MacIcns\n---------------------------------------------------------------\nRun.run()\n\n");
 			throw new RuntimeException(e);
 		}
 	}
 
 	private void doNothing() {
-
+		try {
+			TimeUnit.MILLISECONDS.sleep(10);
+		}
+		catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

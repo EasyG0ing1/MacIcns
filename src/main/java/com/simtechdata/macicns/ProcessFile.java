@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class ProcessFile {
 
@@ -48,7 +49,7 @@ public class ProcessFile {
 			BufferedImage original = ImageIO.read(mainPath.toFile());
 			double        width    = original.getWidth();
 			double height = original.getHeight();
-			if(width != 1024 && height != 1024) {
+			if(width != 1024 || height != 1024) {
 				System.out.println("Specified image is not 1024 x 1024 in size");
 				System.exit(0);
 			}
@@ -72,7 +73,7 @@ public class ProcessFile {
 			Thread thread = new Thread(new Run(iconFolder,iconFile));
 			thread.start();
 			while(thread.getState().equals(Thread.State.RUNNABLE)) {
-
+				doNothing();
 			}
 			FileUtils.deleteDirectory(iconFolder.toFile());
 			if (!inWindow) {
@@ -81,12 +82,12 @@ public class ProcessFile {
 			}
 		}
 		catch (IOException e) {
+			System.out.println("There was an error. If the following information does not help you figure out the problem, copy and paste the text below the line and create an issue on https://github.com/EasyG0ing1/MacIcns\n---------------------------------------------------------------\nProcessFile.processFile()\n\n");
 			throw new RuntimeException(e);
 		}
 	}
 
 	private static class Job {
-
 		public Job(BufferedImage original, Path path, int size) {
 			this.original = original;
 			this.path = path;
@@ -116,10 +117,17 @@ public class ProcessFile {
 			}
 		}
 
-		private BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) throws Exception {
+		private BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
 			return Scalr.resize(originalImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_EXACT, targetWidth, targetHeight);
 		}
 	}
 
-
+	private void doNothing() {
+		try {
+			TimeUnit.MILLISECONDS.sleep(10);
+		}
+		catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

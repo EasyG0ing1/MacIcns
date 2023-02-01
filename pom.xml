@@ -6,7 +6,7 @@
 
     <groupId>org.example</groupId>
     <artifactId>MacIcns</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
 
     <properties>
         <maven.compiler.source>19</maven.compiler.source>
@@ -52,6 +52,11 @@
             <groupId>com.simtechdata</groupId>
             <artifactId>EasyFXControls</artifactId>
             <version>1.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>4.8.154</version>
         </dependency>
     </dependencies>
 <build>

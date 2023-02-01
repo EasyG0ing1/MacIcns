@@ -3,10 +3,14 @@ package com.simtechdata.macicns;
 import com.simtechdata.easyfxcontrols.containers.CHBox;
 import com.simtechdata.easyfxcontrols.containers.CVBox;
 import com.simtechdata.easyfxcontrols.controls.Button;
+import com.simtechdata.easyfxcontrols.controls.CCheckBox;
+import com.simtechdata.easyfxcontrols.controls.CImageView;
 import com.simtechdata.easyfxcontrols.controls.CLabel;
 import com.simtechdata.sceneonefx.SceneOne;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
-import javafx.scene.text.Text;
+import javafx.scene.image.Image;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FilenameUtils;
 
@@ -21,60 +25,83 @@ public class Window {
 
 	public Window() {
 		makeControls();
-		SceneOne.set(sceneId, vbox, width, height).centered().newStage().show();
+		setControlProperties();
+		SceneOne.set(sceneId, vbox, width, height).centered().show();
 	}
 
-	private final String sceneId = SceneOne.randomSceneId();
-	private final double width   = 700;
-	private final double height  = 400;
+	private final String  sceneId    = SceneOne.randomSceneId();
+	private final double  width      = 700;
+	private final double  height     = 475;
+	private       boolean processImmediately;
+	private       String  lastPath   = "";
+	private final String  monacoPath = Paths.get(System.getProperty("user.dir"), "Contents", "Resources", "Monaco.ttf").toFile().getAbsolutePath();
+	private final String  iconPath   = Paths.get(System.getProperty("user.dir"), "Contents", "Resources", "Logo.png").toFile().getAbsolutePath();
+	private final Font    monacoFont = Font.loadFont("file:" + monacoPath, 11.5);
+	private final Image   imgIcon    = new Image("file:" + iconPath);
 
-	private CVBox  vbox;
-	private CLabel   text;
-	private CLabel lblFilePath;
-	private Button btnGo;
+	private CVBox     vbox;
+	private CLabel    text;
+	private Button    btnGo;
+	private CCheckBox cbProcessImmediately;
 
 	private Path mainPath;
 
 	private void makeControls() {
-		CLabel lblTitle = new CLabel.Builder("PNG To ICNS").alignment(Pos.CENTER).build();
-		CLabel lblInput = new CLabel.Builder("Select a 1024 x 1024 png file to get started").alignment(Pos.CENTER).build();
-		lblFilePath = new CLabel.Builder().size(width * .9,55).wordWrap(true).alignment(Pos.CENTER).build();
-		text        = new CLabel.Builder().size(width * .95, height * .4).wordWrap(true).build();
-		text.setText("\n\n\n\n\n\n");
-		text.setWrapText(true);
+		CImageView ivTitle  = new CImageView.Builder(imgIcon).preserveRatio(true).fitWidth(150).build();
+		CLabel     lblInput = new CLabel.Builder("Select a 1024 x 1024 png file to get started").alignment(Pos.CENTER).build();
+		cbProcessImmediately = new CCheckBox.Builder().toolTip("Checking this box will cause the png file to be processed immediately after loading it.\nYou won't have to press the Make ICNS File button").build();
+		CLabel lblProcess = new CLabel.Builder("Process file immediately after opening and overwrite if it already exists").build();
+		text = new CLabel.Builder().size(width * .9, 150).wordWrap(true).alignment(Pos.CENTER_LEFT).font(monacoFont).build();
 		Button btnLoad = new Button.Builder("Load Image").width(100).onAction(e -> loadFile()).build();
 		btnGo = new Button.Builder("Make ICNS File").width(155).onAction(e -> createFile()).disabled().build();
 		Button btnClose   = new Button.Builder("Close").width(85).onAction(e -> close()).build();
+		CHBox  boxProcess = new CHBox.Builder(15, cbProcessImmediately, lblProcess).build();
 		CHBox  boxButtons = new CHBox.Builder(25, btnLoad, btnGo, btnClose).alignment(Pos.CENTER).padding(5).build();
-		vbox = new CVBox.Builder(20,lblTitle, lblInput, lblFilePath, text, boxButtons).size(width * .95, height * .9).alignment(Pos.CENTER).padding(8).build();
+		vbox = new CVBox.Builder(10, ivTitle, lblInput, boxProcess, text, boxButtons).size(width * .95, height * .9).alignment(Pos.CENTER).padding(25).build();
+	}
+
+	private void setControlProperties() {
+		cbProcessImmediately.selectedProperty().addListener((ob, ov, nv) -> processImmediately = nv);
 	}
 
 	private void createFile() {
-		new ProcessFile(mainPath, true).run();
-		String msg = text.getText();
-		msg += "\n\nDone!";
-		text.setText(msg);
+		new Thread(() -> {
+			btnGo.setDisable(true);
+			new ProcessFile(mainPath, true).run();
+			final String msg = text.getText() + "Done!";
+			Platform.runLater(() -> text.setText(msg));
+		}).start();
 	}
 
 	private void loadFile() {
+		text.setText("");
 		FileChooser fc = new FileChooser();
 		fc.setInitialDirectory(new File(System.getProperty("user.home")));
+		if(!lastPath.isEmpty()) {
+			fc.setInitialDirectory(new File(lastPath));
+		}
 		File file = fc.showOpenDialog(null);
 		if (file != null) {
 			mainPath = file.toPath();
-			if (imageOK()){
-				lblFilePath.setText(file.getAbsolutePath());
-				btnGo.setDisable(false);
-				String baseName     = FilenameUtils.getBaseName(file.getAbsolutePath());
-				String iconFileName = baseName + ".icns";
-				String rootPath     = file.getParent();
-				Path destinationFile = Paths.get(rootPath,iconFileName);
-				if(destinationFile.toFile().exists()) {
-					text.setText("The file " + iconFileName + " Already exists in folder " + rootPath + "\n\nClicking on Make ICNS WILL OVERWRITE THE FILE.");
+			if (imageOK()) {
+				lastPath = file.getParentFile().getAbsolutePath();
+				text.setText("File: " + file.getName() + "\n\n");
+				btnGo.setDisable(processImmediately);
+				String baseName        = FilenameUtils.getBaseName(file.getAbsolutePath());
+				String iconFileName    = baseName + ".icns";
+				String rootPath        = file.getParent();
+				Path   destinationFile = Paths.get(rootPath, iconFileName);
+				String txt             = text.getText();
+				if (destinationFile.toFile().exists() && !processImmediately) {
+					text.setText(txt + "The file " + iconFileName + " Already exists in folder " + rootPath + "\nClicking on Make ICNS File WILL OVERWRITE THE FILE.\n");
 					return;
 				}
-				String msg          = "Icon file name: " + iconFileName;
-				msg += "\nWill be created in: " + rootPath;
+				String msg = txt + "Icon file name: " + iconFileName + "\n";
+				if (processImmediately) {
+					text.setText(msg);
+					createFile();
+				}
+				else {msg += "Will be created in: " + rootPath + "\n";}
 				text.setText(msg);
 			}
 		}
@@ -82,9 +109,9 @@ public class Window {
 
 	private boolean imageOK() {
 		try {
-			BufferedImage image = ImageIO.read(mainPath.toFile());
-			int imgWidth = image.getWidth();
-			int imgHeight = image.getHeight();
+			BufferedImage image     = ImageIO.read(mainPath.toFile());
+			int           imgWidth  = image.getWidth();
+			int           imgHeight = image.getHeight();
 			if (!(imgWidth == 1024 && imgHeight == 1024)) {
 				String msg = "The selected image must be a PNG file that is 1024 x 1024 pixels in size.";
 				text.setText(msg);
