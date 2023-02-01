@@ -26,7 +26,11 @@ OR
 Java libraries are compiled into the app package so no need to install Java.
 
 ### GUI Mode
-If you run the program in GUI mode and it quits without showing that it's `Done!`, run it from within terminal as described above and it should kick out an error message that will help you understand why it wasn't able to process the file.
+If you run the program in GUI mode and it quits without showing that it's `Done!`, run it from within terminal using this command:
+```Bash
+/Applications/MacIcns.app/Contents/MacOS/universalJavaApplicationStub
+```
+Then, try to process your image again but this time when it exits, it should kick out an error message that will help you understand why it wasn't able to process the file.
 
 ## How it works
 
