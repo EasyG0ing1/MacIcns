@@ -25,6 +25,9 @@ OR
 
 Java libraries are compiled into the app package so no need to install Java.
 
+### GUI Mode
+If you run the program in GUI mode and it quits without showing that it's `Done!`, run it from within terminal as described above and it should kick out an error message that will help you understand why it wasn't able to process the file.
+
 ## How it works
 
 The program takes your 1024 x 1024 png file and it creates a folder where it then converts your image into the different sizes that are needed for the final `.icns` file. Then it calls `iconutil` to do the conversion. It will use the origianl name of your file but it will have `.icns` as the extension name and it will drop it into the same folder that your PNG file is in.
