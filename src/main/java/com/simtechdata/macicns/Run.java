@@ -1,7 +1,11 @@
 package com.simtechdata.macicns;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class Run implements Runnable {
@@ -12,7 +16,29 @@ public class Run implements Runnable {
 	private final String command = "iconutil -c icns %s -o %s";
 
 	public static String findBash() {
-		return "/usr/local/bin/bash";
+		File         shell    = new File("");
+		String       paths    = System.getenv("PATH");
+		List<String> pathList = new ArrayList<>(Arrays.stream(paths.split(":")).toList());
+		for (String path : pathList) {
+			shell = new File(path, "bash");
+			if (shell.exists())
+				break;
+			shell = new File(path, "zsh");
+			if (shell.exists())
+				break;
+		}
+		if(!shell.exists()) {
+			shell = new File("/usr/local/bin/bash");
+		}
+		if (shell.exists()) {
+			System.out.println("Found shell: " + shell.getAbsolutePath());
+			return shell.getAbsolutePath();
+		}
+		else {
+			System.out.println("Could not find bash or zsh shell. Please make sure the path is in your PATH environment variable.");
+			System.exit(0);
+			return "";
+		}
 	}
 
 	public Run(Path iconFolder, Path outPath) {

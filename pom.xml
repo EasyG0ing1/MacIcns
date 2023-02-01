@@ -6,7 +6,7 @@
 
     <groupId>org.example</groupId>
     <artifactId>MacIcns</artifactId>
-    <version>1.0</version>
+    <version>1.0.1</version>
 
     <properties>
         <maven.compiler.source>19</maven.compiler.source>
@@ -117,7 +117,7 @@
                             <resource>/Library/Java/JavaVirtualMachines/JavaFX/19.0.2.1/javafx-sdk-19.0.2.1</resource>
                         </additionalResources>
                         <macConfig>
-                            <volumeIcon>/Users/michael/IdeaProjects/MacIcns/icns/Logo.png</volumeIcon>
+                            <volumeIcon>/Users/michael/IdeaProjects/MacIcns/img/Logo.png</volumeIcon>
                             <icnsFile>/Users/michael/IdeaProjects/MacIcns/assets/mac/Logo.icns</icnsFile>
                             <generateDmg>true</generateDmg>
                             <generatePkg>false</generatePkg>

@@ -26,7 +26,7 @@ public class Window {
 
 	private final String sceneId = SceneOne.randomSceneId();
 	private final double width   = 700;
-	private final double height  = 350;
+	private final double height  = 400;
 
 	private CVBox  vbox;
 	private CLabel   text;
@@ -38,9 +38,10 @@ public class Window {
 	private void makeControls() {
 		CLabel lblTitle = new CLabel.Builder("PNG To ICNS").alignment(Pos.CENTER).build();
 		CLabel lblInput = new CLabel.Builder("Select a 1024 x 1024 png file to get started").alignment(Pos.CENTER).build();
-		lblFilePath = new CLabel.Builder().width(width * .9).alignment(Pos.CENTER).build();
+		lblFilePath = new CLabel.Builder().size(width * .9,55).wordWrap(true).alignment(Pos.CENTER).build();
 		text        = new CLabel.Builder().size(width * .95, height * .4).wordWrap(true).build();
 		text.setText("\n\n\n\n\n\n");
+		text.setWrapText(true);
 		Button btnLoad = new Button.Builder("Load Image").width(100).onAction(e -> loadFile()).build();
 		btnGo = new Button.Builder("Make ICNS File").width(155).onAction(e -> createFile()).disabled().build();
 		Button btnClose   = new Button.Builder("Close").width(85).onAction(e -> close()).build();
