@@ -36,9 +36,9 @@ Then, try to process your image again but this time when it exits, it should kic
 
 ## How it works
 
-The program takes your 1024 x 1024 png file and it creates a folder where it then converts your image into the different sizes that are needed for the final `.icns` file. Then it calls `iconutil` to do the conversion. It will use the origianl name of your file but it will have `.icns` as the extension name and it will drop it into the same folder that your PNG file is in.
+The program takes your 1024 x 1024 png file and it creates a folder where it then converts your image into the different sizes that are needed for the final `.icns` file. Then it calls `iconutil` to do the conversion. It will use the original name of your file but it will have `.icns` as the extension name and it will drop it into the same folder that your PNG file is in.
 
-Thats it!
+That's it!
 
 If you have any issues, open an issue or if you would like to enhance the program, then open a pull request.
 
