@@ -4,7 +4,7 @@ MacICNS is a Java program that will convert any 1024 x 1024 png file into a prop
 
 ### Using the program
 
-It's fairly simply, grab the [latest version](https://github.com/EasyG0ing1/MacIcns/releases/latest) from Releases at the right and download the program and install it.
+It's fairly simple, grab [the latest version](https://github.com/EasyG0ing1/MacIcns/releases/latest) from Releases at the right and download the program and install it.
 
 You can use it in either of two ways. If you launch the program without passing in a path to your png file, it will launch the GUI where you can select the file then convert it.
 
