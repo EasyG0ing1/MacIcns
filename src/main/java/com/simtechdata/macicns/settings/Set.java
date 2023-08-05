@@ -4,6 +4,7 @@ import java.util.prefs.Preferences;
 
 import static com.simtechdata.macicns.settings.LABEL.FOLDER;
 
+
 public class Set {
 
     public static final Set INSTANCE = new Set();

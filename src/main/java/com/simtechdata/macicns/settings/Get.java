@@ -4,6 +4,7 @@ import java.util.prefs.Preferences;
 
 import static com.simtechdata.macicns.settings.LABEL.*;
 
+
 public class Get {
 
     public static final Get INSTANCE = new Get();

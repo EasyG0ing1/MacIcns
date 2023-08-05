@@ -14,5 +14,4 @@ public enum LABEL {
     }
 
     public static final Preferences prefs = Preferences.userNodeForPackage(LABEL.class);
-
 }

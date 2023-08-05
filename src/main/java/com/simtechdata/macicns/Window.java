@@ -231,6 +231,7 @@ public class Window {
         return new File(AppSettings.get.folder());
     }
 
+
     private void close() {
         SceneOne.close(sceneId);
         System.exit(0);

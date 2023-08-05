@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+
 public class Main extends Application {
 
     private static Path mainPath;

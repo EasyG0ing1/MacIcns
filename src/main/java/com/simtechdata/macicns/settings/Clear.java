@@ -16,5 +16,4 @@ public class Clear {
     public void folder() {
         prefs.remove(FOLDER.Name());
     }
-
 }
