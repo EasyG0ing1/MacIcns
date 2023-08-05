@@ -1,28 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>org.example</groupId>
     <artifactId>MacIcns</artifactId>
-    <version>1.1.0</version>
-
+    <version>1.2.0</version>
     <properties>
-        <maven.compiler.source>19</maven.compiler.source>
-        <maven.compiler.target>19</maven.compiler.target>
+        <maven.compiler.source>20</maven.compiler.source>
+        <maven.compiler.target>20</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <exec.appName>com.simtechdata.macicns</exec.appName>
         <exec.mainClass>com.simtechdata.macicns.Launcher</exec.mainClass>
-        <javafx.version>19</javafx.version>
+        <javafx.version>20</javafx.version>
+        <javapackager>1.7.2</javapackager>
+        <maven-jar-plugin>3.3.0</maven-jar-plugin>
+        <maven-compiler-plugin>3.11.0</maven-compiler-plugin>
+        <versions-maven-plugin>2.15.0</versions-maven-plugin>
     </properties>
-
     <dependencies>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-web</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -39,99 +33,112 @@
             <version>4.2</version>
         </dependency>
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.11.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.simtechdata</groupId>
             <artifactId>SceneOneFX</artifactId>
-            <version>1.5.0</version>
+            <version>1.4.0</version>
         </dependency>
         <dependency>
             <groupId>com.simtechdata</groupId>
             <artifactId>EasyFXControls</artifactId>
-            <version>1.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.classgraph</groupId>
-            <artifactId>classgraph</artifactId>
-            <version>4.8.154</version>
+            <version>1.4.0</version>
         </dependency>
     </dependencies>
-<build>
-    <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.10.0</version>
-            <configuration>
-                <source>19</source>
-                <target>19</target>
-                <compilerArgs>--enable-preview</compilerArgs>
-            </configuration>
-        </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId>
-            <version>3.2.2</version>
-            <configuration>
-                <skipIfEmpty>true</skipIfEmpty>
-                <archive>
-                    <manifestEntries>
-                        <Main-Class>${exec.mainClass}</Main-Class>
-                        <Automatic-Module-Name>${exec.appName}</Automatic-Module-Name>
-                        <Program-Version>${project.version}</Program-Version>
-                        <Implementation-Version>${project.version}</Implementation-Version>
-                    </manifestEntries>
-                </archive>
-            </configuration>
-        </plugin>
-        <plugin>
-            <groupId>io.github.fvarrui</groupId>
-            <artifactId>javapackager</artifactId>
-            <version>1.6.7</version>
-            <configuration>
-                <mainClass>${exec.mainClass}</mainClass>
-                <bundleJre>true</bundleJre>
-                <customizedJre>false</customizedJre>
-                <generateInstaller>true</generateInstaller>
-                <administratorRequired>false</administratorRequired>
-                <copyDependencies>true</copyDependencies>
-            </configuration>
-            <executions>
-                <execution>
-                    <id>mac</id>
-                    <phase>package</phase>
-                    <goals>
-                        <goal>package</goal>
-                    </goals>
-                    <configuration>
-                        <assetsDir>${projectdir}/assets</assetsDir>
-                        <platform>auto</platform>
-                        <createZipball>false</createZipball>
-                        <createTarball>false</createTarball>
-                        <assetsDir>/Users/michael/IdeaProjects/MacIcns/assets</assetsDir>
-                        <vmArgs>
-                            <vmArg>--enable-preview</vmArg>
-                        </vmArgs>
-                        <additionalModulePaths>
-                            <modulePath>/Library/Java/JavaVirtualMachines/JavaFX/19.0.2.1/javafx-jmods-19.0.2.1</modulePath>
-                        </additionalModulePaths>
-                        <additionalResources>
-                            <resource>/Library/Java/JavaVirtualMachines/JavaFX/19.0.2.1/javafx-sdk-19.0.2.1</resource>
-                        </additionalResources>
-                        <macConfig>
-                            <volumeIcon>/Users/michael/IdeaProjects/MacIcns/img/Logo.png</volumeIcon>
-                            <icnsFile>/Users/michael/IdeaProjects/MacIcns/assets/mac/Logo.icns</icnsFile>
-                            <generateDmg>true</generateDmg>
-                            <generatePkg>false</generatePkg>
-                            <macStartup>X86_64</macStartup>
-                        </macConfig>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
-    </plugins>
-</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin}</version>
+                <configuration>
+                    <source>20</source>
+                    <target>20</target>
+                    <compilerArgs>--enable-preview</compilerArgs>
+                </configuration>
+            </plugin>
+            <!--Maven Versions Plugin-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>${versions-maven-plugin}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin}</version>
+                <configuration>
+                    <skipIfEmpty>true</skipIfEmpty>
+                    <archive>
+                        <manifestEntries>
+                            <Main-Class>${exec.mainClass}</Main-Class>
+                            <Automatic-Module-Name>${exec.appName}</Automatic-Module-Name>
+                            <Program-Version>${project.version}</Program-Version>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>io.github.fvarrui</groupId>
+                <artifactId>javapackager</artifactId>
+                <version>${javapackager}</version>
+                <configuration>
+                    <name>${project.name}</name>
+                    <displayName>${project.name}</displayName>
+                    <description>${project.name} is a program that converts your 1024x1024 image to a proper .icns file</description>
+                    <bundleJre>true</bundleJre>
+                    <generateInstaller>true</generateInstaller>
+                    <licenseFile>LICENSE</licenseFile>
+                    <url>https://github.com/EasyG0ing1/${project.name}/</url>
+                    <assetsDir>./assets</assetsDir>
+                    <organizationName>${project.name}</organizationName>
+                    <organizationUrl>https://github.com/EasyG0ing1/${project.name}/</organizationUrl>
+                    <version>${project.version}</version>
+                    <macConfig>
+                        <!-- general properties -->
+                        <appId>${project.name}</appId>
+                        <icnsFile>./assets.mac.${project.name}.icns</icnsFile>
+                        <generateDmg>true</generateDmg>
+                        <generatePkg>true</generatePkg>
+                        <relocateJar>false</relocateJar>
+                        <macStartup>UNIVERSAL</macStartup>
+                        <codesignApp>false</codesignApp>
+                        <!-- properties used for DMG disk image generation -->
+                        <volumeName>${project.name}</volumeName>
+                        <!-- properties used for Info.plist file generation -->
+                        <infoPlist>
+                            <bundlePackageType>APPL</bundlePackageType>
+                        </infoPlist>
+                    </macConfig>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>mac</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                        <configuration>
+                            <bundleJre>true</bundleJre>
+                            <platform>mac</platform>
+                            <mainClass>${exec.mainClass}</mainClass>
+                            <outputDirectory>./target/PACKAGES/Mac</outputDirectory>
+                            <createZipball>false</createZipball>
+                            <createTarball>false</createTarball>
+                            <vmArgs>
+                                <vmArg>--enable-preview</vmArg>
+                            </vmArgs>
+                            <macConfig>
+                                <volumeIcon>/Users/michael/JetBrainsProjects/IntelliJIdea/MacIcns/img/Logo.png</volumeIcon>
+                                <icnsFile>/Users/michael/JetBrainsProjects/IntelliJIdea/MacIcns/assets/mac/Logo.icns</icnsFile>
+                                <generateDmg>true</generateDmg>
+                                <generatePkg>false</generatePkg>
+                                <macStartup>X86_64</macStartup>
+                            </macConfig>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    
 </project>

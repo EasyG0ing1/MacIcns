@@ -1,6 +1,14 @@
 ![Logo](./img/Logo.png)
 
-MacICNS is a Java program that will convert any 1024 x 1024 png file into a proper MacOS .icns file.
+MacICNS is a Java program that will convert any valid 1024 x 1024 image file into a proper MacOS .icns file.
+
+Valid image types are:
+* PNG
+* JPG
+* GIF
+* BMP
+* TIFF
+* SVG
 
 ### Using the program
 
@@ -14,7 +22,8 @@ You must have `iconutil` available in your PATH or it won't work. You can check 
 
 `iconutil` comes with MacOS so this should not be a problem.
 
-There are a couple of ways you can pass the path of your png file into the program:
+### Command Line Usage
+By default, the program will run in GUI mode, but if you prefer to run it from terminal, there are a couple of ways you can pass the path of your image file into the program:
 ```bash
 open /Applications/MacIcns.app --args /Users/username/Pictures/MyIcon.png
 ```
@@ -23,12 +32,12 @@ OR
 /Applications/MacIcns.app/Contents/MacOS/universalJavaApplicationStub /Users/username/Pictures/MyIcon.png
 ```
 
-The program uses the filename of your `.png` file but replaces the extension with `.icns`. If the `.icns` file already exists, the program will overwrite the file if it is being run from within Terminal. In the GUI, you will have the option of overwriting the file.
+The program uses the filename of your image file but replaces the extension with `.icns`. If the `.icns` file already exists, the program will overwrite the file if it is being run from within Terminal. In the GUI, you will have the option of overwriting the file.
 
-Java libraries are compiled into the app package so no need to install Java.
+### Java libraries are compiled into the app package so no need to install Java.
 
 ### GUI Mode
-If you run the program in GUI mode and it quits without showing that it's `Done!`, run it from within terminal using this command:
+If the program quits without showing that the file was created successfully (green text under the program logo), run it from within terminal using this command:
 ```Bash
 /Applications/MacIcns.app/Contents/MacOS/universalJavaApplicationStub
 ```
@@ -36,7 +45,12 @@ Then, try to process your image again but this time when it exits, it should kic
 
 ## How it works
 
-The program takes your 1024 x 1024 png file and it creates a folder where it then converts your image into the different sizes that are needed for the final `.icns` file. Then it calls `iconutil` to do the conversion. It will use the original name of your file but it will have `.icns` as the extension name and it will drop it into the same folder that your PNG file is in.
+The program takes your 1024 x 1024 image file and it creates a folder where it then converts your image into the different sizes that are needed for the final `.icns` file. Then it calls `iconutil` to do the conversion. It will use the original name of your file but it will have `.icns` as the extension name and it will drop it into the same folder that your selected image file resides in.
+
+## Updates
+* 1.2
+  * Program got a massive face lift.
+  * Can now use other valid images than just PNG
 
 That's it!
 
