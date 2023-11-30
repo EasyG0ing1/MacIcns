@@ -29,6 +29,10 @@ public class ProcessFile {
         return processFile();
     }
 
+    private static String icnsFilePath;
+    public static String getIcnsFilePath() {
+        return icnsFilePath;
+    }
     private boolean processFile() {
         boolean success = false;
         if (mainPath != null) {
@@ -36,6 +40,7 @@ public class ProcessFile {
             Path iconFolder = Paths.get(folder, "icon.iconset");
             String iconFilename = FilenameUtils.getBaseName(mainPath.toString()) + ".icns";
             Path iconFile = Paths.get(folder, iconFilename);
+            icnsFilePath = iconFile.toAbsolutePath().toString();
             Path Image1 = Paths.get(iconFolder.toString(), "icon_512x512@2x.png");
             Path Image2 = Paths.get(iconFolder.toString(), "icon_512x512.png");
             Path Image3 = Paths.get(iconFolder.toString(), "icon_256x256@2x.png");

@@ -20,6 +20,7 @@ import javafx.stage.StageStyle;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +49,8 @@ public class Window {
     private static final URL loadImageDown = Window.class.getResource("/buttons/LoadImageDOWN.png");
     private static final URL closeUp = Window.class.getResource("/buttons/CloseUP.png");
     private static final URL closeDown = Window.class.getResource("/buttons/CloseDOWN.png");
+    private static final URL viewUp = Window.class.getResource("/buttons/ViewUP.png");
+    private static final URL viewDown = Window.class.getResource("/buttons/ViewDOWN.png");
     private static final URL logo = Window.class.getResource("/icons/Logo.png");
 
     private static final Image imgFrame = new Image(frame.toExternalForm());
@@ -57,11 +60,14 @@ public class Window {
     private static final Image imgLoadImageDown = new Image(loadImageDown.toExternalForm());
     private static final Image imgCloseUp = new Image(closeUp.toExternalForm());
     private static final Image imgCloseDown = new Image(closeDown.toExternalForm());
+    private static final Image imgViewDown = new Image(viewDown.toExternalForm());
+    private static final Image imgViewUp = new Image(viewUp.toExternalForm());
     private static final Image imgLogo = new Image(logo.toExternalForm());
 
     private CImageView ivMakeFile;
     private CImageView ivLoadImage;
     private CImageView ivClose;
+    private CImageView ivView;
     private CVBox vbox;
 
     private CText textDirections;
@@ -71,6 +77,7 @@ public class Window {
     private CText textPathLabel;
     private CText textICNSLabel;
     private CText textICNSName;
+    private CText textFinalPath;
     private CText textPath;
     private CText text3;
     private CText text4;
@@ -79,18 +86,21 @@ public class Window {
 
     private void makeControls() {
         ap = new AnchorPane.Builder(width, height).backImage(imgFrame).build();
+
         textResults = new CText.Builder("").font(Fonts.Lato_Black(20), Color.GREENYELLOW).bold().build();
-        textFileLabel = new CText.Builder("File: ").font(Fonts.FiraCode_Regular(20), Color.WHITE).lineSpacing(1.0).bold().build();
-        textPathLabel = new CText.Builder("Path: ").font(Fonts.FiraCode_Regular(20), Color.WHITE).lineSpacing(1.0).bold().build();
-        textICNSLabel = new CText.Builder("ICNS: ").font(Fonts.FiraCode_Regular(20), Color.WHITE).bold().lineSpacing(1.0).build();
-        textFilename = new CText.Builder("").font(Fonts.FiraCode_Bold(20), Color.WHITE).bold().lineSpacing(1.0).build();
-        textICNSName = new CText.Builder("").font(Fonts.FiraCode_Bold(20), Color.WHITE).bold().lineSpacing(1.0).build();
-        textPath = new CText.Builder("").font(Fonts.FiraCode_Regular(13), Color.WHITE).lineSpacing(1.0).build();
-        text3 = new CText.Builder("\n").font(Fonts.FiraCode_Regular(22), Color.WHITE).lineSpacing(1.0).build();
-        text4 = new CText.Builder("\n").font(Fonts.FiraCode_Regular(18), Color.WHITE).lineSpacing(1.0).build();
+        textFinalPath = new CText.Builder("/Users/michael/temp/icons").font(Fonts.Lato_Black(20), Color.YELLOW).bold().visible(false).build();
+        textFileLabel = new CText.Builder("File: ").font(Fonts.Fira_Code_Regular(20), Color.WHITE).lineSpacing(1.0).bold().build();
+        textPathLabel = new CText.Builder("Path: ").font(Fonts.Fira_Code_Regular(20), Color.WHITE).lineSpacing(1.0).bold().build();
+        textICNSLabel = new CText.Builder("ICNS: ").font(Fonts.Fira_Code_Regular(20), Color.WHITE).bold().lineSpacing(1.0).build();
+        textFilename = new CText.Builder("").font(Fonts.Fira_Code_Bold(20), Color.WHITE).bold().lineSpacing(1.0).build();
+        textICNSName = new CText.Builder("").font(Fonts.Fira_Code_Bold(20), Color.WHITE).bold().lineSpacing(1.0).build();
+        textPath = new CText.Builder("").font(Fonts.Fira_Code_Regular(13), Color.WHITE).lineSpacing(1.0).build();
+        text3 = new CText.Builder("\n").font(Fonts.Fira_Code_Regular(22), Color.WHITE).lineSpacing(1.0).build();
+        text4 = new CText.Builder("\n").font(Fonts.Fira_Code_Regular(18), Color.WHITE).lineSpacing(1.0).build();
         ivMakeFile = new CImageView.Builder(imgMakeFileUp).downImage(imgMakeFileDown).preserveRatio(true).fitWidth(180).build();
         ivLoadImage = new CImageView.Builder(imgLoadImageUp).downImage(imgLoadImageDown).preserveRatio(true).fitWidth(180).build();
         ivClose = new CImageView.Builder(imgCloseUp).downImage(imgCloseDown).preserveRatio(true).fitWidth(180).build();
+        ivView = new CImageView.Builder(imgViewUp).downImage(imgViewDown).preserveRatio(true).fitWidth(250).hidden().build();
         CImageView ivTitle = new CImageView.Builder(imgLogo).preserveRatio(true).fitWidth(200).build();
         textDirections = new CText.Builder("Click Load Image and select a 1024 x 1024 image file\n").font(Fonts.Lato_Heavy(24), Color.WHITE).bold().build();
         CHBox boxButtons = new CHBox.Builder(25, ivLoadImage, ivMakeFile, ivClose).alignment(Pos.CENTER).padding(5).build();
@@ -99,8 +109,11 @@ public class Window {
         finalText.setVisible(false);
         vbox.setFillWidth(true);
         vbox.setPrefWidth(width);
+        CVBox boxTest = new CVBox.Builder(textFinalPath).alignment(Pos.CENTER).build();
         ap.getChildren().add(vbox);
         ap.addNode(boxButtons, 0, 0, -1, 20);
+        ap.addNode(ivView, -1, ((width / 2) - 125), ((height / 2) + 35), -1);
+        ap.addNode(boxTest, 0, 0, ((height / 2) + 140), -1);
     }
 
     private CVBox showFinalText() {
@@ -114,6 +127,16 @@ public class Window {
         ivMakeFile.setOnMouseClicked(e -> Platform.runLater(this::createFile));
         ivLoadImage.setOnMouseClicked(e -> Platform.runLater(this::loadFile));
         ivClose.setOnMouseClicked(e -> Platform.runLater(this::close));
+        ivView.setOnMouseClicked(e -> Platform.runLater(this::openPreview));
+    }
+
+    private void openPreview() {
+        try {
+            File file = new File(ProcessFile.getIcnsFilePath());
+            Desktop.getDesktop().open(file);
+        } catch (IOException e) {
+            Platform.runLater(() -> textFinalPath.setText("Problem with finding or opening Preview"));
+        }
     }
 
     private void setLabels() {
@@ -135,7 +158,10 @@ public class Window {
                 Platform.runLater(() -> {
                     clearText();
                     clearLabels();
+                    textFinalPath.setText(ProcessFile.getIcnsFilePath());
                     textResults.setText(msg);
+                    ivView.show();
+                    textFinalPath.show();
                 });
             }
         }).start();
@@ -143,6 +169,10 @@ public class Window {
 
     private void loadFile() {
         clearText();
+        Platform.runLater(() -> {
+            ivView.hide();
+            textFinalPath.hide();
+        });
         FileChooser fc = new FileChooser();
         File startFolder = getFolder();
         if (!startFolder.exists()) {
@@ -168,33 +198,36 @@ public class Window {
                         setLabels();
                         text3.setText("ICNS file already exists");
                         text3.setFill(Color.YELLOW);
-                        text3.setFont(Fonts.FiraCode_Regular(20));
-                        text3.setFont(Fonts.FiraCode_Regular(18));
+                        text3.setFont(Fonts.Fira_Code_Regular(20));
+                        text3.setFont(Fonts.Fira_Code_Regular(18));
                         text4.setText("Clicking on Make File will overwrite the file");
                         text4.setFill(Color.YELLOW);
-                    } else {
+                    }
+                    else {
                         setLabels();
                         text3.setText("Click Make File to create the ICNS file");
                         text3.setFill(Color.YELLOW);
-                        text3.setFont(Fonts.FiraCode_Regular(22));
+                        text3.setFont(Fonts.Fira_Code_Regular(22));
                         text4.setText("");
                     }
-                } else {
+                }
+                else {
                     clearLabels();
                     text3.setText("Selected file is not 1024 x 1024 pixels");
                     vbox.setPadding(new Insets(15, 10, 20, 10));
-                    text3.setFont(Fonts.FiraCode_Regular(22));
+                    text3.setFont(Fonts.Fira_Code_Regular(22));
                     text3.setFill(Color.ORANGERED);
                     text4.setText("");
                 }
-            } else {
+            }
+            else {
                 clearLabels();
                 text3.setText("Selected file is not a valid image type");
-                text3.setFont(Fonts.FiraCode_Bold(20));
+                text3.setFont(Fonts.Fira_Code_Bold(20));
                 text3.setFill(Color.YELLOW);
                 text4.setText("Must be: PNG, JPEG, GIF, TIFF, BMP or SVG");
                 text4.setFill(Color.YELLOW);
-                text4.setFont(Fonts.FiraCode_Bold(20));
+                text4.setFont(Fonts.Fira_Code_Bold(20));
             }
             finalText.setVisible(true);
         }
