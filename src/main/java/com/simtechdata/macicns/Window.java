@@ -18,6 +18,7 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.StageStyle;
 import org.apache.commons.io.FilenameUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -130,15 +131,6 @@ public class Window {
         ivView.setOnMouseClicked(e -> Platform.runLater(this::openPreview));
     }
 
-    private void openPreview() {
-        try {
-            File file = new File(ProcessFile.getIcnsFilePath());
-            Desktop.getDesktop().open(file);
-        } catch (IOException e) {
-            Platform.runLater(() -> textFinalPath.setText("Problem with finding or opening Preview"));
-        }
-    }
-
     private void setLabels() {
         textFileLabel.setText("File: ");
         textICNSLabel.setText("ICNS: ");
@@ -240,6 +232,36 @@ public class Window {
         textPath.setText("");
         textFilename.setText("");
         textICNSName.setText("");
+    }
+
+    private void openPreview() {
+        try {
+            File file = new File(ProcessFile.getIcnsFilePath());
+            if(file.exists())
+                Desktop.getDesktop().open(file);
+            else {
+                Platform.runLater(() -> textFinalPath.setText(getNoFileMessage()));
+            }
+        } catch (IOException e) {
+            Platform.runLater(() -> textFinalPath.setText("Problem with finding or opening Preview"));
+        }
+    }
+
+    @NotNull
+    private static String getNoFileMessage() {
+        String filePath = ProcessFile.getIcnsFilePath();
+        String exist = "File does not exist!";
+        int lenPath = filePath.length();
+        int lenExist = exist.length();
+        int delta = Math.abs(lenExist - lenPath);
+        int count = delta + (delta / 4);
+        if((lenPath > lenExist) || lenPath == lenExist) {
+            exist = " ".repeat(count) + exist;
+        }
+        else {
+            filePath = " ".repeat(count) + filePath;
+        }
+        return filePath + "\n" + exist;
     }
 
     private boolean imageOK() {
