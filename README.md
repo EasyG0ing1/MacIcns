@@ -48,7 +48,11 @@ Then, try to process your image again but this time when it exits, it should kic
 The program takes your 1024 x 1024 image file and it creates a folder where it then converts your image into the different sizes that are needed for the final `.icns` file. Then it calls `iconutil` to do the conversion. It will use the original name of your file but it will have `.icns` as the extension name and it will drop it into the same folder that your selected image file resides in.
 
 ## Updates
-* 1.2
+* 1.3.0
+  * Added button after icns creation which will open the new file in the MacOS Preview application.
+  * Other minor code improvements.
+
+* 1.2.0
   * Program got a massive face lift.
   * Can now use other valid images than just PNG
 
