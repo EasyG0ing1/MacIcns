@@ -49,6 +49,7 @@ The program takes your 1024 x 1024 image file and it creates a folder where it t
 
 ## Updates
 * 1.3.2
+  * Now compiling with GraalVM so that program no longer depends on a Java runtime environment. Much more efficient!
   * Fixed bug where spaces in path names were not generating the `.icns` file
   * Changed UI for aesthetics and moved the drag region to the top of the program window
   * Other minor code improvements.

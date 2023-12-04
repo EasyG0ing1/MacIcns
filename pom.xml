@@ -20,6 +20,7 @@
         <maven-compiler-plugin>3.11.0</maven-compiler-plugin>
         <versions-maven-plugin>2.15.0</versions-maven-plugin>
         <native-maven-plugin>0.9.28</native-maven-plugin>
+        <versions-maven-plugin>2.16.2</versions-maven-plugin>
     </properties>
     <dependencies>
         <dependency>
@@ -48,6 +49,31 @@
             <version>1.4.0</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Maven Versions -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>${versions-maven-plugin}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>display-dependency-updates</goal>
+                            <goal>display-plugin-updates</goal>
+                            <goal>property-updates-report</goal>
+                            <goal>dependency-updates-report</goal>
+                            <goal>plugin-updates-report</goal>
+                            <goal>update-properties</goal>
+                            <goal>use-latest-versions</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <profile>
             <id>native</id>
@@ -95,8 +121,6 @@
                         <version>8.8.3</version>
                         <configuration>
                             <mainClass>com.simtechdata.Main</mainClass>
-                            <verbose>true</verbose>
-                            <appName>MacIcns</appName>
                         </configuration>
                     </plugin>
                     <!-- GluonFX Maven Plugin -->
