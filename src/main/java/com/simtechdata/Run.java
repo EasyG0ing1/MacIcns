@@ -1,4 +1,4 @@
-package com.simtechdata.macicns;
+package com.simtechdata;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -11,7 +11,7 @@ public class Run implements Runnable {
     private final Path iconFolder;
     private final Path outPath;
 
-    private final String command = "iconutil -c icns %s -o %s";
+    private final String command = "iconutil -c icns \"%s\" -o \"%s\"";
 
     public Run(Path iconFolder, Path outPath) {
         this.iconFolder = iconFolder;

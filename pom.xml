@@ -1,20 +1,25 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.example</groupId>
+
+    <groupId>com.simtechdata</groupId>
     <artifactId>MacIcns</artifactId>
-    <version>1.3.0</version>
+    <version>1.3.2</version>
+
     <properties>
-        <maven.compiler.source>20</maven.compiler.source>
-        <maven.compiler.target>20</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <exec.appName>com.simtechdata.macicns</exec.appName>
-        <exec.mainClass>com.simtechdata.macicns.Launcher</exec.mainClass>
-        <javafx.version>20</javafx.version>
+        <exec.mainClass>com.simtechdata.Launcher</exec.mainClass>
+        <javafx.version>21</javafx.version>
         <javapackager>1.7.2</javapackager>
         <maven-jar-plugin>3.3.0</maven-jar-plugin>
         <maven-compiler-plugin>3.11.0</maven-compiler-plugin>
         <versions-maven-plugin>2.15.0</versions-maven-plugin>
+        <native-maven-plugin>0.9.28</native-maven-plugin>
     </properties>
     <dependencies>
         <dependency>
@@ -43,98 +48,68 @@
             <version>1.4.0</version>
         </dependency>
     </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin}</version>
-                <configuration>
-                    <source>20</source>
-                    <target>20</target>
-                </configuration>
-            </plugin>
-            <!--Maven Versions Plugin-->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>${versions-maven-plugin}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>${maven-jar-plugin}</version>
-                <configuration>
-                    <skipIfEmpty>true</skipIfEmpty>
-                    <archive>
-                        <manifestEntries>
-                            <Main-Class>${exec.mainClass}</Main-Class>
-                            <Automatic-Module-Name>${exec.appName}</Automatic-Module-Name>
-                            <Program-Version>${project.version}</Program-Version>
-                            <Implementation-Version>${project.version}</Implementation-Version>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>io.github.fvarrui</groupId>
-                <artifactId>javapackager</artifactId>
-                <version>${javapackager}</version>
-                <configuration>
-                    <name>${project.name}</name>
-                    <displayName>${project.name}</displayName>
-                    <description>${project.name} is a program that converts your 1024x1024 image to a proper .icns file</description>
-                    <bundleJre>true</bundleJre>
-                    <generateInstaller>true</generateInstaller>
-                    <licenseFile>LICENSE</licenseFile>
-                    <url>https://github.com/EasyG0ing1/${project.name}/</url>
-                    <assetsDir>./assets</assetsDir>
-                    <organizationName>${project.name}</organizationName>
-                    <organizationUrl>https://github.com/EasyG0ing1/${project.name}/</organizationUrl>
-                    <version>${project.version}</version>
-                    <macConfig>
-                        <!-- general properties -->
-                        <appId>${project.name}</appId>
-                        <icnsFile>./assets.mac.${project.name}.icns</icnsFile>
-                        <generateDmg>true</generateDmg>
-                        <generatePkg>true</generatePkg>
-                        <relocateJar>false</relocateJar>
-                        <macStartup>UNIVERSAL</macStartup>
-                        <codesignApp>false</codesignApp>
-                        <!-- properties used for DMG disk image generation -->
-                        <volumeName>${project.name}</volumeName>
-                        <!-- properties used for Info.plist file generation -->
-                        <infoPlist>
-                            <bundlePackageType>APPL</bundlePackageType>
-                        </infoPlist>
-                    </macConfig>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>mac</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>package</goal>
-                        </goals>
+    <profiles>
+        <profile>
+            <id>native</id>
+            <properties>
+                <package.type>pkg</package.type>
+                <system-native-image-arg>-Dsvm.platform=org.graalvm.nativeimage.Platform$MACOS_AMD64</system-native-image-arg>
+                <system-linker-arg>${pom.basedir}/config/missing_symbols-macos-latest.o</system-linker-arg>
+                <mac.app.store>true</mac.app.store>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- GraalVM Native Maven Plugin -->
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <version>${native-maven-plugin}</version>
+                        <extensions>true</extensions>
+                        <executions>
+                            <execution>
+                                <id>build-native</id>
+                                <goals>
+                                    <goal>compile-no-fork</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                        </executions>
                         <configuration>
-                            <bundleJre>true</bundleJre>
-                            <platform>mac</platform>
-                            <mainClass>${exec.mainClass}</mainClass>
-                            <outputDirectory>./target/PACKAGES/Mac</outputDirectory>
-                            <createZipball>false</createZipball>
-                            <createTarball>false</createTarball>
-                            <macConfig>
-                                <volumeIcon>/Users/michael/JetBrainsProjects/IntelliJIdea/MacIcns/img/Logo.png</volumeIcon>
-                                <icnsFile>/Users/michael/JetBrainsProjects/IntelliJIdea/MacIcns/assets/mac/Logo.icns</icnsFile>
-                                <generateDmg>true</generateDmg>
-                                <generatePkg>false</generatePkg>
-                                <macStartup>X86_64</macStartup>
-                            </macConfig>
+                            <imageName>macicns</imageName>
+                            <mainClass>com.simtechdata.Main</mainClass>
+                            <verbose>true</verbose>
+                            <buildArgs>
+                                <buildArg>
+                                    -H:ResourceConfigurationFiles=${project.basedir}/config/resources.json
+                                </buildArg>
+                                <buildArg>
+                                    --initialize-at-build-time=com.simtechdata.Main
+                                </buildArg>
+                            </buildArgs>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-    
+                    </plugin>
+                    <!-- JavaFX Maven Plugin -->
+                    <plugin>
+                        <groupId>com.zenjava</groupId>
+                        <artifactId>javafx-maven-plugin</artifactId>
+                        <version>8.8.3</version>
+                        <configuration>
+                            <mainClass>com.simtechdata.Main</mainClass>
+                            <verbose>true</verbose>
+                            <appName>MacIcns</appName>
+                        </configuration>
+                    </plugin>
+                    <!-- GluonFX Maven Plugin -->
+                    <plugin>
+                        <groupId>com.gluonhq</groupId>
+                        <artifactId>gluonfx-maven-plugin</artifactId>
+                        <version>1.0.21</version>
+                        <configuration>
+                            <mainClass>com.simtechdata.Main</mainClass>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

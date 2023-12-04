@@ -1,0 +1,13 @@
+{
+  "resources": {
+    "includes": [
+      {"pattern": ".*/buttons/*png$"},
+      {"pattern": ".*/icons/*png$"},
+      {"pattern": ".*/misc/*png$"},
+      {"pattern": ".*/Dialog.png"},
+      {"pattern": ".*/Frame2.png"}
+    ],
+    "excludes": [
+    ]
+  }
+}

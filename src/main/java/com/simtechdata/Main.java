@@ -1,4 +1,4 @@
-package com.simtechdata.macicns;
+package com.simtechdata;
 
 import com.simtechdata.sceneonefx.SceneOne;
 import javafx.application.Application;
@@ -21,11 +21,13 @@ public class Main extends Application {
         if (mainPath != null) {
             if (mainPath.toFile().exists()) {
                 new ProcessFile(mainPath, false).run();
-            } else {
+            }
+            else {
                 System.out.println("No file exists at this path: " + args[0]);
                 System.exit(0);
             }
-        } else {
+        }
+        else {
             launch(args);
         }
     }

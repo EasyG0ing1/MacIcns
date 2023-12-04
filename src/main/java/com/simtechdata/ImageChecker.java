@@ -1,6 +1,8 @@
-package com.simtechdata.macicns;
+package com.simtechdata;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class ImageChecker {

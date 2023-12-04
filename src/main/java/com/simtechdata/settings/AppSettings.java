@@ -1,4 +1,4 @@
-package com.simtechdata.macicns.settings;
+package com.simtechdata.settings;
 
 public class AppSettings {
 

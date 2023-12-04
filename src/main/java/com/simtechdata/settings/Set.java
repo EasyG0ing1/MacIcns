@@ -1,8 +1,8 @@
-package com.simtechdata.macicns.settings;
+package com.simtechdata.settings;
 
 import java.util.prefs.Preferences;
 
-import static com.simtechdata.macicns.settings.LABEL.FOLDER;
+import static com.simtechdata.settings.LABEL.FOLDER;
 
 
 public class Set {
