@@ -13,7 +13,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <exec.appName>com.simtechdata.macicns</exec.appName>
-        <exec.mainClass>com.simtechdata.Launcher</exec.mainClass>
+        <mainClass>com.simtechdata.Main</mainClass>
         <javafx.version>21</javafx.version>
         <javapackager>1.7.2</javapackager>
         <maven-jar-plugin>3.3.0</maven-jar-plugin>
@@ -21,6 +21,14 @@
         <versions-maven-plugin>2.15.0</versions-maven-plugin>
         <native-maven-plugin>0.9.28</native-maven-plugin>
         <versions-maven-plugin>2.16.2</versions-maven-plugin>
+        <javafx-maven-plugin>8.8.3</javafx-maven-plugin>
+        <maven-surefire-plugin>3.2.2</maven-surefire-plugin>
+        <gluonfx-maven-plugin>1.0.21</gluonfx-maven-plugin>
+        <maven-compiler-plugin>3.11.0</maven-compiler-plugin>
+        <system-linker-arg/>
+        <system-native-image-arg/>
+        <compatibility-arg/>
+        <package.type/>
     </properties>
 
     <dependencies>
@@ -43,11 +51,15 @@
             <groupId>com.simtechdata</groupId>
             <artifactId>SceneOneFX</artifactId>
             <version>1.4.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/.mvn/SceneOneFX/SceneOneFX-1.4.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.simtechdata</groupId>
             <artifactId>EasyFXControls</artifactId>
             <version>1.4.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/.mvn/EasyFXControls/EasyFXControls-1.4.0.jar</systemPath>
         </dependency>
     </dependencies>
 
@@ -72,7 +84,78 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- GraalVM Native Maven Plugin -->
+            <!-- Maven compiler plugin-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin}</version>
+            </plugin>
+            <!-- Maven Surefire plugin-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin}</version>
+                <configuration>
+                    <classpathDependencyExcludes>org.graalvm.nativeimage</classpathDependencyExcludes>
+                    <argLine>-ea</argLine>
+                </configuration>
+            </plugin>
+            <!-- JavaFX Maven Plugin -->
+            <plugin>
+                <groupId>com.zenjava</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>${javafx-maven-plugin}</version>
+                <configuration>
+                    <mainClass>${mainClass}</mainClass>
+                </configuration>
+            </plugin>
+            <!-- GluonFX GUI native image builder plugin -->
+            <plugin>
+                <groupId>com.gluonhq</groupId>
+                <artifactId>gluonfx-maven-plugin</artifactId>
+                <version>${gluonfx-maven-plugin}</version>
+                <configuration>
+                    <mainClass>${mainClass}</mainClass>
+                    <linkerArgs>
+                        <arg>${system-linker-arg}</arg>
+                    </linkerArgs>
+                    <nativeImageArgs>
+                        <arg>--enable-url-protocols=https</arg>
+                        <arg>--enable-url-protocols=http</arg>
+                        <arg>--no-fallback</arg>
+                        <arg>--verbose</arg>
+                        <arg>--add-exports=org.graalvm.nativeimage.builder/com.oracle.svm.core.jdk=ALL-UNNAMED</arg>
+                        <arg>${system-native-image-arg}</arg>
+                        <arg>${compatibility-arg}</arg>
+                    </nativeImageArgs>
+                    <appIdentifier>${mainClass}</appIdentifier>
+                    <releaseConfiguration>
+                        <vendor>Syphon</vendor>
+                        <description>MacIcns is a program that will take a single 1024x1024 png file and create a correctly formatted icns file</description>
+                        <packageType>${package.type}</packageType>
+                        <bundleShortVersion>${project.version}</bundleShortVersion>
+                        <bundleVersion>${project.version}</bundleVersion>
+                        <!-- for macOS/iOS -->
+                        <skipSigning>true</skipSigning>
+                    </releaseConfiguration>
+                </configuration>
+            </plugin>
+            <!-- Maven Jar plugin-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+<!--
+            &lt;!&ndash; GraalVM Native Maven Plugin &ndash;&gt;
             <plugin>
                 <groupId>org.graalvm.buildtools</groupId>
                 <artifactId>native-maven-plugin</artifactId>
@@ -96,29 +179,12 @@
                             -H:ResourceConfigurationFiles=${project.basedir}/config/resources.json
                         </buildArg>
                         <buildArg>
-                            --initialize-at-build-time=com.simtechdata.Main
+                            &#45;&#45;initialize-at-build-time=com.simtechdata.Main
                         </buildArg>
                     </buildArgs>
                 </configuration>
             </plugin>
-            <!-- JavaFX Maven Plugin -->
-            <plugin>
-                <groupId>com.zenjava</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>
-                <version>8.8.3</version>
-                <configuration>
-                    <mainClass>com.simtechdata.Main</mainClass>
-                </configuration>
-            </plugin>
-            <!-- GluonFX Maven Plugin -->
-            <plugin>
-                <groupId>com.gluonhq</groupId>
-                <artifactId>gluonfx-maven-plugin</artifactId>
-                <version>1.0.21</version>
-                <configuration>
-                    <mainClass>com.simtechdata.Main</mainClass>
-                </configuration>
-            </plugin>
+-->
         </plugins>
     </build>
 
@@ -134,24 +200,4 @@
             </properties>
         </profile>
     </profiles>
-
-
-
-<!--
-    <profiles>
-        <profile>
-            <id>native</id>
-            <properties>
-                <package.type>pkg</package.type>
-                <system-native-image-arg>-Dsvm.platform=org.graalvm.nativeimage.Platform$MACOS_AMD64</system-native-image-arg>
-                <system-linker-arg>${pom.basedir}/config/missing_symbols-macos-latest.o</system-linker-arg>
-                <mac.app.store>true</mac.app.store>
-            </properties>
-            <build>
-                <plugins>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
--->
 </project>
