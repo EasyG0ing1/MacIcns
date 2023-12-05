@@ -9,12 +9,10 @@
     <version>1.3.2</version>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.release>20</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <exec.appName>com.simtechdata.macicns</exec.appName>
         <mainClass>com.simtechdata.Main</mainClass>
-        <javafx.version>21</javafx.version>
+        <javafx.version>21-ea+24</javafx.version>
         <javapackager>1.7.2</javapackager>
         <maven-jar-plugin>3.3.0</maven-jar-plugin>
         <maven-compiler-plugin>3.11.0</maven-compiler-plugin>

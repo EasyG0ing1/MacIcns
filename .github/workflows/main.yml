@@ -59,7 +59,7 @@ jobs:
           path: ${{ matrix.os }}.tar
 
   generate-metadata:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: build-MacIcns
     steps:
       - uses: actions/checkout@v4
