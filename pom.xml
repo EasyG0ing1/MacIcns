@@ -22,6 +22,7 @@
         <native-maven-plugin>0.9.28</native-maven-plugin>
         <versions-maven-plugin>2.16.2</versions-maven-plugin>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -71,9 +72,72 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- GraalVM Native Maven Plugin -->
+            <plugin>
+                <groupId>org.graalvm.buildtools</groupId>
+                <artifactId>native-maven-plugin</artifactId>
+                <version>${native-maven-plugin}</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>build-native</id>
+                        <goals>
+                            <goal>compile-no-fork</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <imageName>macicns</imageName>
+                    <mainClass>com.simtechdata.Main</mainClass>
+                    <verbose>true</verbose>
+                    <buildArgs>
+                        <buildArg>
+                            -H:ResourceConfigurationFiles=${project.basedir}/config/resources.json
+                        </buildArg>
+                        <buildArg>
+                            --initialize-at-build-time=com.simtechdata.Main
+                        </buildArg>
+                    </buildArgs>
+                </configuration>
+            </plugin>
+            <!-- JavaFX Maven Plugin -->
+            <plugin>
+                <groupId>com.zenjava</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>8.8.3</version>
+                <configuration>
+                    <mainClass>com.simtechdata.Main</mainClass>
+                </configuration>
+            </plugin>
+            <!-- GluonFX Maven Plugin -->
+            <plugin>
+                <groupId>com.gluonhq</groupId>
+                <artifactId>gluonfx-maven-plugin</artifactId>
+                <version>1.0.21</version>
+                <configuration>
+                    <mainClass>com.simtechdata.Main</mainClass>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
+    <profiles>
+        <!-- [=macOS] GUI native image builder profile -->
+        <profile>
+            <id>build-for-macos-latest</id>
+            <properties>
+                <package.type>pkg</package.type>
+                <system-native-image-arg>-Dsvm.platform=org.graalvm.nativeimage.Platform$MACOS_AMD64</system-native-image-arg>
+                <system-linker-arg>${pom.basedir}/config/missing_symbols-macos-latest.o</system-linker-arg>
+                <mac.app.store>true</mac.app.store>
+            </properties>
+        </profile>
+    </profiles>
+
+
+
+<!--
     <profiles>
         <profile>
             <id>native</id>
@@ -85,55 +149,9 @@
             </properties>
             <build>
                 <plugins>
-                    <!-- GraalVM Native Maven Plugin -->
-                    <plugin>
-                        <groupId>org.graalvm.buildtools</groupId>
-                        <artifactId>native-maven-plugin</artifactId>
-                        <version>${native-maven-plugin}</version>
-                        <extensions>true</extensions>
-                        <executions>
-                            <execution>
-                                <id>build-native</id>
-                                <goals>
-                                    <goal>compile-no-fork</goal>
-                                </goals>
-                                <phase>package</phase>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <imageName>macicns</imageName>
-                            <mainClass>com.simtechdata.Main</mainClass>
-                            <verbose>true</verbose>
-                            <buildArgs>
-                                <buildArg>
-                                    -H:ResourceConfigurationFiles=${project.basedir}/config/resources.json
-                                </buildArg>
-                                <buildArg>
-                                    --initialize-at-build-time=com.simtechdata.Main
-                                </buildArg>
-                            </buildArgs>
-                        </configuration>
-                    </plugin>
-                    <!-- JavaFX Maven Plugin -->
-                    <plugin>
-                        <groupId>com.zenjava</groupId>
-                        <artifactId>javafx-maven-plugin</artifactId>
-                        <version>8.8.3</version>
-                        <configuration>
-                            <mainClass>com.simtechdata.Main</mainClass>
-                        </configuration>
-                    </plugin>
-                    <!-- GluonFX Maven Plugin -->
-                    <plugin>
-                        <groupId>com.gluonhq</groupId>
-                        <artifactId>gluonfx-maven-plugin</artifactId>
-                        <version>1.0.21</version>
-                        <configuration>
-                            <mainClass>com.simtechdata.Main</mainClass>
-                        </configuration>
-                    </plugin>
                 </plugins>
             </build>
         </profile>
     </profiles>
+-->
 </project>
