@@ -6,6 +6,7 @@ module MacIcns {
     requires org.apache.commons.io;
     requires imgscalr.lib;
     requires java.prefs;
+    requires jproc;
 
     exports com.simtechdata;
 

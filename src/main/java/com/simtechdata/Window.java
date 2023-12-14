@@ -9,6 +9,7 @@ import com.simtechdata.easyfxcontrols.fonts.Fonts;
 import com.simtechdata.sceneonefx.SceneOne;
 import com.simtechdata.settings.AppSettings;
 import com.simtechdata.utils.Colors;
+import com.simtechdata.utils.Shell;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,15 +21,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.StageStyle;
 import org.apache.commons.io.FilenameUtils;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
+
+import static com.simtechdata.enums.OverlayColor.*;
 
 public class Window {
 
@@ -96,7 +95,6 @@ public class Window {
 
     private void makeControls() {
         ap = new AnchorPane.Builder(width, height).backImage(imgFrame).build();
-
         textResults = new CText.Builder("").font(Fonts.Lato_Black(20), Color.GREENYELLOW).bold().build();
         textFinalPath = new CText.Builder("/Users/michael/temp/icons").font(Fonts.Lato_Black(20), Color.YELLOW).bold().visible(false).build();
         textFileLabel = new CText.Builder("File: ").font(Fonts.Fira_Code_Regular(20), Color.WHITE).lineSpacing(1.0).bold().build();
@@ -110,9 +108,11 @@ public class Window {
         ivDragLeft = new CImageView.Builder(imgDragLeft).preserveRatio(true).fitWidth(180).build();
         ivDragRight = new CImageView.Builder(imgDragRight).preserveRatio(true).fitWidth(180).build();
         ivMakeFile = new CImageView.Builder(imgMakeFileUp).downImage(imgMakeFileDown).preserveRatio(true).fitWidth(180).build();
-        ivLoadImage = new CImageView.Builder(imgLoadImageUp).downImage(imgLoadImageDown).preserveRatio(true).fitWidth(180).build();
+        ivLoadImage = new CImageView.Builder(Colors.overlay(imgLoadImageUp, GREEN)).downImage(Colors.overlay(imgLoadImageDown, GREEN)).preserveRatio(true).fitWidth(180).build();
         ivClose = new CImageView.Builder(imgCloseUp).downImage(imgCloseDown).preserveRatio(true).fitWidth(180).build();
-        ivView = new CImageView.Builder(imgViewUp).downImage(imgViewDown).preserveRatio(true).fitWidth(250).hidden().build();
+        System.out.println("ivView Starting");
+        ivView = new CImageView.Builder(Colors.overlay(imgViewUp, GREEN)).downImage(Colors.overlay(imgViewDown, BLUE)).preserveRatio(true).fitWidth(250).hidden().build();
+        System.out.println("ivView Done");
         CImageView ivTitle = new CImageView.Builder(imgLogo).preserveRatio(true).fitWidth(200).build();
         textDirections = new CText.Builder("Click Load Image and select a 1024 x 1024 image file\n").font(Fonts.Lato_Heavy(24), Color.WHITE).bold().build();
         CHBox boxButtons = new CHBox.Builder(25, ivLoadImage, ivMakeFile, ivClose).alignment(Pos.CENTER).padding(5).build();
@@ -216,7 +216,7 @@ public class Window {
                         text4.setFont(Fonts.Fira_Code_Bold(18));
                         text4.setText("Clicking on Make File will overwrite the file");
                         text4.setFill(Color.rgb(255,255,0));
-                        ivMakeFile.setImages(Colors.overlayRed(imgMakeFileUp), Colors.overlayRed(imgMakeFileDown));
+                        ivMakeFile.setImages(Colors.overlay(imgMakeFileUp, RED), Colors.overlay(imgMakeFileDown, RED));
                     }
                     else {
                         setLabels();
@@ -224,8 +224,10 @@ public class Window {
                         text3.setFill(Color.YELLOW);
                         text3.setFont(Fonts.Fira_Code_Regular(22));
                         text4.setText("");
+                        ivMakeFile.setImages(Colors.overlay(imgMakeFileUp, GREEN), Colors.overlay(imgMakeFileDown, GREEN));
                     }
                     fileLoaded = true;
+                    ivLoadImage.setImages(imgLoadImageUp, imgLoadImageDown);
                 }
                 else {
                     if(!fileLoaded)
@@ -254,46 +256,26 @@ public class Window {
     }
 
     private void openPreview() {
-        try {
-            File file = new File(ProcessFile.getIcnsFilePath());
-            if (file.exists())
-                Desktop.getDesktop().open(file);
-            else {
-                Platform.runLater(() -> textFinalPath.setText(getNoFileMessage()));
-            }
-        } catch (IOException e) {
-            new Dialog("Problem with finding or opening Preview");
-        }
-    }
-
-    private static String getNoFileMessage() {
-        String filePath = ProcessFile.getIcnsFilePath();
-        String exist = "File does not exist!";
-        int lenPath = filePath.length();
-        int lenExist = exist.length();
-        int delta = Math.abs(lenExist - lenPath);
-        int count = delta + (delta / 4);
-        if ((lenPath > lenExist) || lenPath == lenExist) {
-            exist = " ".repeat(count) + exist;
+        File file = new File(ProcessFile.getIcnsFilePath());
+        if (file.exists()) {
+            String openPath = file.getAbsolutePath();
+            String[] args = new String[]{"-a","Preview", openPath};
+            int response = Shell.run("open", args);
+            if (response != 0)
+                new Dialog("There was a problem finding or launching the Preview application");
         }
         else {
-            filePath = " ".repeat(count) + filePath;
+            String filePath = ProcessFile.getIcnsFilePath();
+            String message = "File does not exist: " + filePath;
+            new Dialog(message);
         }
-        return filePath + "\n" + exist;
     }
 
     private boolean imageOK() {
-        try {
-            BufferedImage image = ImageIO.read(fileChosen.toFile());
-            int imgWidth = image.getWidth();
-            int imgHeight = image.getHeight();
-            if (imgWidth != 1024 || imgHeight != 1024) {
-                return false;
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return true;
+        Image image = new Image(fileChosen.toUri().toString());
+        double imgWidth = image.getWidth();
+        double imgHeight = image.getHeight();
+        return imgWidth == 1024.0 && imgHeight == 1024.0;
     }
 
     private void setFolder(File folder) {
