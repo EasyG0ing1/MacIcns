@@ -1,0 +1,26 @@
+[
+  {
+    "name":"com.simtechdata.ProcessFile",
+    "allDeclaredConstructors":true,
+    "allPublicMethods":true,
+    "allDeclaredFields":true
+  },
+  {
+    "name":"com.simtechdata.Response",
+    "allDeclaredConstructors":true,
+    "allPublicMethods":true,
+    "allDeclaredFields":true
+  },
+  {
+    "name":"com.simtechdata.ImageChecker",
+    "allDeclaredConstructors":true,
+    "allPublicMethods":true,
+    "allDeclaredFields":true
+  },
+  {
+    "name":"com.simtechdata.Dialog",
+    "allDeclaredConstructors":true,
+    "allPublicMethods":true,
+    "allDeclaredFields":true
+  }
+]
