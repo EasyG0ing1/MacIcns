@@ -13,7 +13,7 @@ jobs:
   build-MacIcns:
     strategy:
       matrix:
-        os: ["macos-latest"]
+        os: [ "macos-latest" ]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:

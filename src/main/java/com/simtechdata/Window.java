@@ -174,7 +174,7 @@ public class Window {
             }
             else {
                 String message = response.getMessage();
-                new Dialog(message);
+                new Dialog("Problem: " + message);
             }
         }).start();
     }
@@ -285,7 +285,6 @@ public class Window {
     private File getFolder() {
         return new File(AppSettings.get.folder());
     }
-
 
     private void close() {
         SceneOne.close(sceneId);
