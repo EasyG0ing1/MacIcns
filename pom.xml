@@ -20,7 +20,8 @@
         <versions-maven-plugin>2.15.0</versions-maven-plugin>
         <native-maven-plugin>0.9.28</native-maven-plugin>
         <versions-maven-plugin>2.16.2</versions-maven-plugin>
-        <javafx-maven-plugin>8.8.3</javafx-maven-plugin>
+        <!--<javafx-maven-plugin>8.8.3</javafx-maven-plugin>-->
+        <javafx-maven-plugin>0.0.8</javafx-maven-plugin>
         <maven-surefire-plugin>3.2.2</maven-surefire-plugin>
         <gluonfx-maven-plugin>1.0.21</gluonfx-maven-plugin>
         <maven-compiler-plugin>3.11.0</maven-compiler-plugin>
@@ -98,11 +99,13 @@
             </plugin>
             <!-- JavaFX Maven Plugin -->
             <plugin>
-                <groupId>com.zenjava</groupId>
+                <!--<groupId>com.zenjava</groupId>-->
+                <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>${javafx-maven-plugin}</version>
                 <configuration>
                     <mainClass>${mainClass}</mainClass>
+                    <launcher>MacIcns</launcher>
                 </configuration>
             </plugin>
             <!-- GluonFX GUI native image builder plugin -->
@@ -156,22 +159,6 @@
         </plugins>
     </build>
 
-<!--
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.8</version>
-                <configuration>
-                    <mainClass>${mainClass}</mainClass>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
--->
-
-
     <profiles>
         <!-- [=macOS] GUI native image builder profile -->
         <profile>
@@ -184,63 +171,5 @@
                 <mac.app.store>true</mac.app.store>
             </properties>
         </profile>
-<!--
-        <profile>
-            <id>jar</id>
-            <build>
-                <plugins>
-                    &lt;!&ndash; Maven Assembly Plugin &ndash;&gt;
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>${maven-assembly-plugin}</version>
-                        <executions>
-                            <execution>
-                                <id>make-assembly</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                                <configuration>
-                                    <descriptorRefs>
-                                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                                    </descriptorRefs>
-                                    <archive>
-                                        <manifest>
-                                            <addClasspath>true</addClasspath>
-                                            <classpathPrefix>lib/</classpathPrefix>
-                                            <mainClass>${mainClass}</mainClass>
-                                        </manifest>
-                                    </archive>
-                                    <finalName>MacIcns</finalName>
-                                    <appendAssemblyId>false</appendAssemblyId>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    &lt;!&ndash; Maven Surefire plugin&ndash;&gt;
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${maven-surefire-plugin}</version>
-                        <configuration>
-                            <classpathDependencyExcludes>org.graalvm.nativeimage</classpathDependencyExcludes>
-                            <argLine>-ea</argLine>
-                            <argLine>&#45;&#45;illegal-access=permit</argLine>
-                        </configuration>
-                    </plugin>
-                    &lt;!&ndash; Maven JavaFX plugin&ndash;&gt;
-                    <plugin>
-                        <groupId>com.zenjava</groupId>
-                        <artifactId>javafx-maven-plugin</artifactId>
-                        <version>${javafx-maven-plugin}</version>
-                        <configuration>
-                            <mainClass>${mainClass}</mainClass>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
--->
     </profiles>
 </project>

@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
+
 import static com.simtechdata.enums.OverlayColor.*;
 
 public class Window {
@@ -101,6 +102,23 @@ public class Window {
     private Path fileChosen;
     private VBox finalText;
     private boolean fileLoaded = false;
+    private       double       xx    , yy;
+
+    private void mouseDragged(MouseEvent event, double topAreaRatio) {
+        if(yy <= height * topAreaRatio) {
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setX(event.getScreenX() - xx);
+            stage.setY(event.getScreenY() - yy);
+        }
+    }
+
+    private void mousePressed(MouseEvent event) {
+        xx = event.getSceneX();
+        yy = event.getSceneY();
+    }
+
+
+
 
     private void makeControls() {
 
@@ -138,6 +156,8 @@ public class Window {
         addNode(boxTest, 0, ((height / 2) + 140), 0, -1);
         addNode(ivDragLeft, 25, 65, -1, -1);
         addNode(ivDragRight, -1, 65, 25, -1);
+        ap.setOnMouseDragged(e -> mouseDragged(e, .15));
+        ap.setOnMousePressed(this::mousePressed);
     }
 
     private AnchorPane newAnchorPane(Image backImage){
