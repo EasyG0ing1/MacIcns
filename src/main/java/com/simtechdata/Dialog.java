@@ -1,15 +1,21 @@
 package com.simtechdata;
 
-import com.simtechdata.easyfxcontrols.containers.AnchorPane;
-import com.simtechdata.easyfxcontrols.containers.CVBox;
-import com.simtechdata.easyfxcontrols.controls.CImageView;
-import com.simtechdata.easyfxcontrols.controls.CText;
-import com.simtechdata.easyfxcontrols.fonts.Fonts;
-import com.simtechdata.sceneonefx.SceneOne;
+import com.simtechdata.fonts.Fonts;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.net.URL;
@@ -20,46 +26,82 @@ public class Dialog {
     public Dialog(String message) {
         this.message = message;
         makeControls();
-        setControlProperties();
-        Platform.runLater(() -> {
-            SceneOne.set(sceneId, ap, width, height).newStage().initStyle(StageStyle.TRANSPARENT).centered().alwaysOnTop().build();
-            SceneOne.getScene(sceneId).setFill(Color.rgb(0, 0, 125, .01));
-            SceneOne.showAndWait(sceneId);
-        });
+        this.stage = new Stage();
+        this.scene = new Scene(ap);
+        this.stage.initStyle(StageStyle.TRANSPARENT);
+        this.stage.centerOnScreen();
+        this.stage.setAlwaysOnTop(true);
+        this.stage.setWidth(width);
+        this.stage.setHeight(height);
+        this.scene.setFill(Color.rgb(0, 0, 125, .01));
+        this.stage.setScene(this.scene);
+        this.stage.showAndWait();
     }
 
+    private final Stage stage;
+    private final Scene scene;
     private final String message;
-    private final String sceneId = SceneOne.getRandomSceneId();
     private final double width = 471;
     private final double height = 231;
     private AnchorPane ap;
-    private static final URL frame = Dialog.class.getResource("/Dialog.png");
     private static final URL OKUp = Window.class.getResource("/buttons/OkUP.png");
     private static final URL OKDown = Window.class.getResource("/buttons/OkDOWN.png");
-    private static final Image imgFrame = new Image(frame.toExternalForm());
     private static final Image imgOKUp = new Image(OKUp.toExternalForm());
     private static final Image imgOKDown = new Image(OKDown.toExternalForm());
 
-    private CImageView ivOK;
-    private CText textMessage;
+    private ImageView ivOK;
+    private Text textMessage;
 
 
     private void makeControls() {
-        ap = new AnchorPane.Builder(width, height).backImage(imgFrame).build();
-        textMessage = new CText.Builder(message).font(Fonts.Lato_Black(19), Color.YELLOW).lineSpacing(1.0).bold().build();
+        ap = new AnchorPane();
+        ap.setPrefWidth(width);
+        ap.setPrefHeight(height);
+        textMessage = newText(message, Fonts.Lato_Black(19), Color.YELLOW, 1.0, true);
         textMessage.setWrappingWidth(395);
-        ivOK = new CImageView.Builder(imgOKUp).downImage(imgOKDown).preserveRatio(true).fitWidth(180).build();
-        CVBox vbox = new CVBox.Builder(55,textMessage,ivOK).alignment(Pos.CENTER).build();
-        ap.addNode(vbox,10,10,10, 10);
+        ivOK = newImageView(imgOKUp, imgOKDown, 180, e-> Platform.runLater(this::close));
+        VBox vbox = newVBox(55, Pos.CENTER, new Insets(0), textMessage, ivOK);
+        addNode(vbox, 10, 10, 10, 10);
     }
 
-    private void setControlProperties() {
-        ivOK.setOnMouseClicked(e -> Platform.runLater(this::close));
+    private Text newText(String msg, Font font, Color color, double lineSpacing, boolean bold) {
+        Text text = new Text(msg);
+        text.setFont(font);
+        text.setLineSpacing(lineSpacing);
+        text.setStyle(bold ? "-fx-font-weight: bold;" : "");
+        text.setFill(color);
+        return text;
+    }
+    private VBox newVBox(double spacing, Pos alignment, Insets padding, Node... nodes) {
+        VBox box = new VBox(spacing, nodes);
+        box.setAlignment(alignment);
+        box.setPadding(padding);
+        return box;
+    }
+    private void addNode(Node node, double left, double top, double right, double bottom) {
+        ap.getChildren().add(node);
+        AnchorPane.setLeftAnchor(node, left);
+        AnchorPane.setTopAnchor(node, top);
+        AnchorPane.setRightAnchor(node, right);
+        AnchorPane.setBottomAnchor(node, bottom);
+    }
 
+    private ImageView newImageView(Image up, Image down, double size, EventHandler<? super MouseEvent> mouseClicked) {
+        ImageView iv = new ImageView(up);
+        if (down != null) {
+            iv.setOnMousePressed(e -> iv.setImage(down));
+            iv.setOnMouseReleased(e -> iv.setImage(up));
+        }
+        if(mouseClicked != null) {
+            iv.setOnMouseClicked(mouseClicked);
+        }
+        iv.setPreserveRatio(true);
+        iv.setFitWidth(size);
+        return iv;
     }
 
     private void close() {
-        SceneOne.close(sceneId);
+        this.stage.close();
     }
 
 }

@@ -1,7 +1,7 @@
 package com.simtechdata.utils;
 
-import org.buildobjects.process.ProcBuilder;
-import org.buildobjects.process.ProcResult;
+import com.simtechdata.process.ProcBuilder;
+import com.simtechdata.process.ProcResult;
 
 public class Shell {
 

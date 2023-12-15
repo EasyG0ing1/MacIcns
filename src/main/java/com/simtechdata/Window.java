@@ -1,23 +1,27 @@
 package com.simtechdata;
 
-import com.simtechdata.easyfxcontrols.containers.AnchorPane;
-import com.simtechdata.easyfxcontrols.containers.CHBox;
-import com.simtechdata.easyfxcontrols.containers.CVBox;
-import com.simtechdata.easyfxcontrols.controls.CImageView;
-import com.simtechdata.easyfxcontrols.controls.CText;
-import com.simtechdata.easyfxcontrols.fonts.Fonts;
-import com.simtechdata.sceneonefx.SceneOne;
+import com.simtechdata.fonts.Fonts;
 import com.simtechdata.settings.AppSettings;
 import com.simtechdata.utils.Colors;
 import com.simtechdata.utils.Shell;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.event.EventHandler;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.commons.io.FilenameUtils;
 
@@ -31,16 +35,21 @@ import static com.simtechdata.enums.OverlayColor.*;
 
 public class Window {
 
-    public Window() {
+    public Window(Stage primaryStage) {
         makeControls();
         setControlProperties();
-        SceneOne.set(sceneId, ap, width, height).initStyle(StageStyle.TRANSPARENT).centered().build();
-        SceneOne.getScene(sceneId).setFill(Color.rgb(0, 0, 125, .01));
-        SceneOne.show(sceneId);
+        this.stage = primaryStage;
+        this.scene = new Scene(ap);
+        this.stage.initStyle(StageStyle.TRANSPARENT);
+        this.stage.centerOnScreen();
+        this.scene.setFill(Color.rgb(0, 0, 125, .01));
+        this.stage.setScene(this.scene);
+        this.stage.show();
         fadeThread();
     }
 
-    private final String sceneId = SceneOne.getRandomSceneId();
+    private final Stage stage;
+    private final Scene scene;
     private final double width = 750;
     private final double height = 650;
     private AnchorPane ap;
@@ -70,71 +79,155 @@ public class Window {
     private static final Image imgDragRight = new Image(dragMoveRight.toExternalForm());
     private static final Image imgDragLeft = new Image(dragMoveLeft.toExternalForm());
 
-    private CImageView ivDragLeft;
-    private CImageView ivDragRight;
-    private CImageView ivMakeFile;
-    private CImageView ivLoadImage;
-    private CImageView ivClose;
-    private CImageView ivView;
-    private CVBox vbox;
+    private ImageView ivDragLeft;
+    private ImageView ivDragRight;
+    private ImageView ivMakeFile;
+    private ImageView ivLoadImage;
+    private ImageView ivClose;
+    private ImageView ivView;
+    private VBox vbox;
 
-    private CText textDirections;
-    private CText textResults;
-    private CText textFileLabel;
-    private CText textFilename;
-    private CText textPathLabel;
-    private CText textICNSLabel;
-    private CText textICNSName;
-    private CText textFinalPath;
-    private CText textPath;
-    private CText text3;
-    private CText text4;
+    private Text textDirections;
+    private Text textResults;
+    private Text textFileLabel;
+    private Text textFilename;
+    private Text textPathLabel;
+    private Text textICNSLabel;
+    private Text textICNSName;
+    private Text textFinalPath;
+    private Text textPath;
+    private Text text3;
+    private Text text4;
     private Path fileChosen;
     private VBox finalText;
     private boolean fileLoaded = false;
 
     private void makeControls() {
-        ap = new AnchorPane.Builder(width, height).backImage(imgFrame).build();
-        textResults = new CText.Builder("").font(Fonts.Lato_Black(20), Color.GREENYELLOW).bold().build();
-        textFinalPath = new CText.Builder("/Users/michael/temp/icons").font(Fonts.Lato_Black(20), Color.YELLOW).bold().visible(false).build();
-        textFileLabel = new CText.Builder("File: ").font(Fonts.Fira_Code_Regular(20), Color.WHITE).lineSpacing(1.0).bold().build();
-        textPathLabel = new CText.Builder("Path: ").font(Fonts.Fira_Code_Regular(20), Color.WHITE).lineSpacing(1.0).bold().build();
-        textICNSLabel = new CText.Builder("ICNS: ").font(Fonts.Fira_Code_Regular(20), Color.WHITE).bold().lineSpacing(1.0).build();
-        textFilename = new CText.Builder("").font(Fonts.Fira_Code_Bold(20), Color.WHITE).bold().lineSpacing(1.0).build();
-        textICNSName = new CText.Builder("").font(Fonts.Fira_Code_Bold(20), Color.WHITE).bold().lineSpacing(1.0).build();
-        textPath = new CText.Builder("").font(Fonts.Fira_Code_Regular(13), Color.WHITE).lineSpacing(1.0).build();
-        text3 = new CText.Builder("\n").font(Fonts.Fira_Code_Regular(22), Color.WHITE).lineSpacing(1.0).build();
-        text4 = new CText.Builder("\n").font(Fonts.Fira_Code_Regular(18), Color.WHITE).lineSpacing(1.0).build();
-        ivDragLeft = new CImageView.Builder(imgDragLeft).preserveRatio(true).fitWidth(180).build();
-        ivDragRight = new CImageView.Builder(imgDragRight).preserveRatio(true).fitWidth(180).build();
-        ivMakeFile = new CImageView.Builder(imgMakeFileUp).downImage(imgMakeFileDown).preserveRatio(true).fitWidth(180).build();
-        ivLoadImage = new CImageView.Builder(Colors.overlay(imgLoadImageUp, GREEN)).downImage(Colors.overlay(imgLoadImageDown, GREEN)).preserveRatio(true).fitWidth(180).build();
-        ivClose = new CImageView.Builder(imgCloseUp).downImage(imgCloseDown).preserveRatio(true).fitWidth(180).build();
-        System.out.println("ivView Starting");
-        ivView = new CImageView.Builder(Colors.overlay(imgViewUp, GREEN)).downImage(Colors.overlay(imgViewDown, BLUE)).preserveRatio(true).fitWidth(250).hidden().build();
-        System.out.println("ivView Done");
-        CImageView ivTitle = new CImageView.Builder(imgLogo).preserveRatio(true).fitWidth(200).build();
-        textDirections = new CText.Builder("Click Load Image and select a 1024 x 1024 image file\n").font(Fonts.Lato_Heavy(24), Color.WHITE).bold().build();
-        CHBox boxButtons = new CHBox.Builder(25, ivLoadImage, ivMakeFile, ivClose).alignment(Pos.CENTER).padding(5).build();
+
+        ap = newAnchorPane(imgFrame);
+        textResults   = newText("", Fonts.Lato_Black(20), Color.GREENYELLOW, 1.0, true);
+        textFinalPath = newText("/Users/michael/temp/icons",Fonts.Lato_Black(20), Color.YELLOW, 1.0, true);
+        textFileLabel = newText("File: ",Fonts.Fira_Code_Regular(20), Color.WHITE, 1.0, true);
+        textPathLabel = newText("Path: ",Fonts.Fira_Code_Regular(20), Color.WHITE, 1.0, true);
+        textICNSLabel = newText("ICNS: ",Fonts.Fira_Code_Regular(20), Color.WHITE, 1.0, true);
+        textFilename  = newText("",Fonts.Fira_Code_Bold(20), Color.WHITE,1.0, false);
+        textICNSName  = newText("",Fonts.Fira_Code_Bold(20), Color.WHITE,1.0, false);
+        textPath      = newText("",Fonts.Fira_Code_Regular(13), Color.WHITE, 1.0, false);
+        text3         = newText("\n",Fonts.Fira_Code_Regular(22), Color.WHITE, 1.0, false);
+        text4         = newText("\n",Fonts.Fira_Code_Regular(18), Color.WHITE, 1.0, false);
+        ivDragLeft = newImageView(imgDragLeft, null, 180, null);
+        ivDragRight = newImageView(imgDragRight,null,180,null);
+        ivMakeFile = newImageView(imgMakeFileUp, imgMakeFileDown, 180,e-> Platform.runLater(this::createFile));
+        ivLoadImage = newImageView(Colors.overlay(imgLoadImageUp, GREEN), Colors.overlay(imgLoadImageDown, GREEN),180, e -> Platform.runLater(this::loadFile));
+        ivClose = newImageView(imgCloseUp, imgCloseDown, 180, e-> Platform.runLater(this::close));
+        ivView = newImageView(Colors.overlay(imgViewUp, GREEN), Colors.overlay(imgViewDown, BLUE), 250, e-> Platform.runLater(this::openPreview));
+        ivView.setVisible(false);
+        ImageView ivTitle = newImageView(imgLogo,null,200, null);
+        textDirections = newText("Click Load Image and select a 1024 x 1024 image file\n", Fonts.Lato_Heavy(24), Color.WHITE, 1.0, true);
+        HBox boxButtons = newHBox(25, Pos.CENTER, new Insets(5), ivLoadImage, ivMakeFile, ivClose);
         finalText = showFinalText();
-        vbox = new CVBox.Builder(10, ivTitle, textResults, textDirections, finalText).size(width * .95, height * .9).alignment(Pos.CENTER).padding(new Insets(10, 10, 45, 10)).build();
+        vbox = newVBox(10, Pos.CENTER, new Insets(10,10,45,10), ivTitle, textResults, textDirections, finalText);
+        vbox.setPrefSize(width * .95, height * .9);
         finalText.setVisible(false);
         vbox.setFillWidth(true);
         vbox.setPrefWidth(width);
-        CVBox boxTest = new CVBox.Builder(textFinalPath).alignment(Pos.CENTER).build();
+        VBox boxTest = newVBox(0, Pos.CENTER, new Insets(0), textFinalPath);
         ap.getChildren().add(vbox);
-        ap.addNode(boxButtons, 0, 0, -1, 20);
-        ap.addNode(ivView, -1, ((width / 2) - 125), ((height / 2) + 35), -1);
-        ap.addNode(boxTest, 0, 0, ((height / 2) + 140), -1);
-        ap.addNode(ivDragLeft, 25, -1, 65, -1);
-        ap.addNode(ivDragRight, -1, 25, 65, -1);
+        addNode(boxButtons, 0, -1, 0, 20);
+        addNode(ivView, -1, ((height / 2) + 35), ((width / 2) - 125), -1);
+        addNode(boxTest, 0, ((height / 2) + 140), 0, -1);
+        addNode(ivDragLeft, 25, 65, -1, -1);
+        addNode(ivDragRight, -1, 65, 25, -1);
     }
 
-    private CVBox showFinalText() {
+    private AnchorPane newAnchorPane(Image backImage){
+        ImageView iv = new ImageView(backImage);
+        AnchorPane ap = new AnchorPane(iv);
+        AnchorPane.setLeftAnchor(iv,0.0);
+        AnchorPane.setRightAnchor(iv,0.0);
+        AnchorPane.setTopAnchor(iv,0.0);
+        AnchorPane.setBottomAnchor(iv,0.0);
+        ap.setPrefWidth(width);
+        ap.setPrefHeight(height);
+        return ap;
+    }
+    private void addNode(Node node, double left, double top, double right, double bottom) {
+        ap.getChildren().add(node);
+        if(left != -1)
+            AnchorPane.setLeftAnchor(node, left);
+        if(top != -1)
+            AnchorPane.setTopAnchor(node, top);
+        if(right != -1)
+            AnchorPane.setRightAnchor(node, right);
+        if(bottom != -1)
+            AnchorPane.setBottomAnchor(node, bottom);
+    }
+    private void addNode(HBox box, double left, double top, double right, double bottom) {
+        ap.getChildren().add(box);
+        if(left != -1)
+            AnchorPane.setLeftAnchor(box, left);
+        if(top != -1)
+            AnchorPane.setTopAnchor(box, top);
+        if(right != -1)
+            AnchorPane.setRightAnchor(box, right);
+        if(bottom != -1)
+            AnchorPane.setBottomAnchor(box, bottom);
+    }
+    private void addNode(VBox box, double left, double top, double right, double bottom) {
+        ap.getChildren().add(box);
+        if(left != -1)
+            AnchorPane.setLeftAnchor(box, left);
+        if(top != -1)
+            AnchorPane.setTopAnchor(box, top);
+        if(right != -1)
+            AnchorPane.setRightAnchor(box, right);
+        if(bottom != -1)
+            AnchorPane.setBottomAnchor(box, bottom);
+    }
+    private Text newText(String msg, Font font, Color color, double lineSpacing, boolean bold) {
+        Text text = new Text(msg);
+        text.setFont(font);
+        text.setLineSpacing(lineSpacing);
+        text.setStyle(bold ? "-fx-font-weight: bold;" : "");
+        text.setFill(color);
+        return text;
+    }
+    private ImageView newImageView(Image up, Image down, double size, EventHandler<? super MouseEvent> mouseClicked) {
+        ImageView iv = new ImageView(up);
+        if (down != null) {
+            iv.setOnMousePressed(e -> iv.setImage(down));
+            iv.setOnMouseReleased(e -> iv.setImage(up));
+        }
+        if(mouseClicked != null) {
+            iv.setOnMouseClicked(mouseClicked);
+        }
+        iv.setPreserveRatio(true);
+        iv.setFitWidth(size);
+        return iv;
+    }
+    private HBox newHBox(double spacing, Pos alignment, Insets padding, Node... nodes) {
+        HBox box = new HBox(spacing, nodes);
+        box.setAlignment(alignment);
+        box.setPadding(padding);
+        return box;
+    }
+    private VBox newVBox(double spacing, Pos alignment, Insets padding, Node... nodes) {
+        VBox box = new VBox(spacing, nodes);
+        box.setAlignment(alignment);
+        box.setPadding(padding);
+        return box;
+    }
+    private void setImages(ImageView iv, Image up, Image down) {
+        iv.setImage(up);
+        iv.setOnMousePressed(e -> iv.setImage(down));
+        iv.setOnMouseReleased(e -> iv.setImage(up));
+    }
+
+    private VBox showFinalText() {
         TextFlow box1 = new TextFlow(textFileLabel, textFilename);
         TextFlow box2 = new TextFlow(textICNSLabel, textICNSName);
         TextFlow box3 = new TextFlow(textPathLabel, textPath);
-        return new CVBox.Builder(5, box1, box2, box3, text3, text4).alignment(Pos.CENTER).padding(new Insets(0, 0, 0, 30)).build();
+        return newVBox(5, Pos.CENTER, new Insets(0, 0, 0, 30), box1, box2, box3, text3, text4);
     }
 
     private void setControlProperties() {
@@ -166,11 +259,11 @@ public class Window {
                     clearLabels();
                     textFinalPath.setText(ProcessFile.getIcnsFilePath());
                     textResults.setText(msg);
-                    ivView.show();
-                    textFinalPath.show();
+                    ivView.setVisible(true);
+                    textFinalPath.setVisible(true);
                 });
                 fileLoaded = false;
-                ivMakeFile.setImages(imgMakeFileUp, imgMakeFileDown);
+                setImages(ivMakeFile, imgMakeFileUp, imgMakeFileDown);
             }
             else {
                 String message = response.getMessage();
@@ -178,11 +271,21 @@ public class Window {
             }
         }).start();
     }
+    private String getNewStyle(String color, boolean bold) {
+        StringBuilder style = new StringBuilder();
+        style.append(bold ? "-fx-font-weight: bold;"   : "");
+        style.append((color != null && !color.isEmpty()) ? "-fx-text-fill: " + color.replace("0x","#") + ";" : "");
+        return style.toString();
+    }
+
+    public void setColor(Text text, Color color, boolean bold) {
+        text.setStyle(getNewStyle(color.toString(), bold));
+    }
 
     private void loadFile() {
         Platform.runLater(() -> {
-            ivView.hide();
-            textFinalPath.hide();
+            ivView.setVisible(false);
+            textFinalPath.setVisible(false);
         });
         FileChooser fc = new FileChooser();
         File startFolder = getFolder();
@@ -192,15 +295,15 @@ public class Window {
         fc.setInitialDirectory(startFolder);
         File file = fc.showOpenDialog(null);
         if (file != null) {
-            ivMakeFile.setImages(imgMakeFileUp, imgMakeFileDown);
+            setImages(ivMakeFile, imgMakeFileUp, imgMakeFileDown);
             setFolder(file.getParentFile());
             if (ImageChecker.isValid(file)) {
                 fileChosen = file.toPath();
                 if (imageOK()) {
                     clearText();
                     String rootPath = file.getParent();
-                    text3.setColor(Color.WHITE);
-                    text4.setColor(Color.WHITE);
+                    setColor(text3, Color.WHITE, false);
+                    setColor(text4, Color.WHITE, false);
                     textFilename.setText(file.getName());
                     textPath.setText(rootPath);
                     String baseName = FilenameUtils.getBaseName(file.getAbsolutePath());
@@ -215,8 +318,8 @@ public class Window {
                         text3.setFont(Fonts.Fira_Code_Regular(18));
                         text4.setFont(Fonts.Fira_Code_Bold(18));
                         text4.setText("Clicking on Make File will overwrite the file");
-                        text4.setFill(Color.rgb(255,255,0));
-                        ivMakeFile.setImages(Colors.overlay(imgMakeFileUp, RED), Colors.overlay(imgMakeFileDown, RED));
+                        text4.setFill(Color.rgb(255, 255, 0));
+                        setImages(ivMakeFile, Colors.overlay(imgMakeFileUp, RED), Colors.overlay(imgMakeFileDown, RED));
                     }
                     else {
                         setLabels();
@@ -224,19 +327,19 @@ public class Window {
                         text3.setFill(Color.YELLOW);
                         text3.setFont(Fonts.Fira_Code_Regular(22));
                         text4.setText("");
-                        ivMakeFile.setImages(Colors.overlay(imgMakeFileUp, GREEN), Colors.overlay(imgMakeFileDown, GREEN));
+                        setImages(ivMakeFile, Colors.overlay(imgMakeFileUp, GREEN), Colors.overlay(imgMakeFileDown, GREEN));
                     }
                     fileLoaded = true;
-                    ivLoadImage.setImages(imgLoadImageUp, imgLoadImageDown);
+                    setImages(ivLoadImage, imgLoadImageUp, imgLoadImageDown);
                 }
                 else {
-                    if(!fileLoaded)
+                    if (!fileLoaded)
                         clearLabels();
                     new Dialog("Selected file is not 1024 x 1024 pixels");
                 }
             }
             else {
-                if(!fileLoaded)
+                if (!fileLoaded)
                     clearLabels();
                 String message = "Selected file is not a valid image type" + "\n";
                 message += "Must be: PNG, JPEG, GIF, TIFF, BMP or SVG";
@@ -259,7 +362,7 @@ public class Window {
         File file = new File(ProcessFile.getIcnsFilePath());
         if (file.exists()) {
             String openPath = file.getAbsolutePath();
-            String[] args = new String[]{"-a","Preview", openPath};
+            String[] args = new String[]{"-a", "Preview", openPath};
             int response = Shell.run("open", args);
             if (response != 0)
                 new Dialog("There was a problem finding or launching the Preview application");
@@ -287,14 +390,14 @@ public class Window {
     }
 
     private void close() {
-        SceneOne.close(sceneId);
+        this.stage.close();
         System.exit(0);
     }
 
     private void fadeThread() {
         new Thread(() -> {
             sleep(2500);
-            for (double x = 1.0; x >= 0.0 ; x-=.01) {
+            for (double x = 1.0; x >= 0.0; x -= .01) {
                 final double opacity = x;
                 Platform.runLater(() -> {
                     ivDragLeft.setOpacity(opacity);

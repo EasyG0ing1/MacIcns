@@ -1,6 +1,5 @@
 package com.simtechdata;
 
-import com.simtechdata.sceneonefx.SceneOne;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -34,7 +33,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        SceneOne.setDefaultStage(primaryStage);
-        new Window();
+        new Window(primaryStage);
     }
 }

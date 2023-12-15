@@ -2,6 +2,11 @@
 
 MacICNS is a Java program that will convert any valid 1024 x 1024 image file into a proper MacOS .icns file.
 
+---
+#### Program is now compiled with GraalVM into a NATIVE executable just like Swift - No JavaVM
+
+---
+
 Valid image types are:
 * PNG
 * JPG

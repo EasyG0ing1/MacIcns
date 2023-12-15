@@ -33,10 +33,6 @@ jobs:
         uses: stCarolas/setup-maven@v4.5
         with:
           maven-version: 3.8.8
-      - name: Install Local Dependencies
-        run: |
-          mvn install:install-file -Dfile=.mvn/SceneOneFX/SceneOneFX-1.4.0.jar -DgroupId=com.simtechdata -DartifactId=SceneOneFX -Dversion=1.4.0 -Dpackaging=jar
-          mvn install:install-file -Dfile=.mvn/EasyFXControls/EasyFXControls-1.4.0.jar -DgroupId=com.simtechdata -DartifactId=EasyFXControls -Dversion=1.4.0 -Dpackaging=jar
       - name: Build platform-specific C object for missing jdk libraries
         run: gcc -c config/missing_symbols.c -o config/missing_symbols-${{ matrix.os }}.o
       - name: Package MacIcns for ${{ matrix.os }} with GluonFX maven plugin
