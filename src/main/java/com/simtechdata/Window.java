@@ -138,7 +138,7 @@ public class Window {
         ivMakeFile = newImageView(imgMakeFileUp, imgMakeFileDown, 180,e-> Platform.runLater(this::createFile));
         ivLoadImage = newImageView(Colors.overlay(imgLoadImageUp, GREEN), Colors.overlay(imgLoadImageDown, GREEN),180, e -> Platform.runLater(this::loadFile));
         ivClose = newImageView(imgCloseUp, imgCloseDown, 180, e-> Platform.runLater(this::close));
-        ivView = newImageView(Colors.overlay(imgViewUp, GREEN), Colors.overlay(imgViewDown, BLUE), 250, e-> Platform.runLater(this::openPreview));
+        ivView = newImageView(Colors.overlay(imgViewUp, GREEN), Colors.overlay(imgViewDown, GREEN), 250, e-> Platform.runLater(this::openPreview));
         ivView.setVisible(false);
         ImageView ivTitle = newImageView(imgLogo,null,200, null);
         textDirections = newText("Click Load Image and select a 1024 x 1024 image file\n", Fonts.Lato_Heavy(24), Color.WHITE, 1.0, true);
