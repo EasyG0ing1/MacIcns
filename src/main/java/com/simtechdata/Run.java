@@ -23,7 +23,6 @@ public class Run {
                 .withNoTimeout()
                 .ignoreExitStatus()
                 .run();
-        System.out.println(result.getCommandLine());
         return result.getExitValue();
     }
 }

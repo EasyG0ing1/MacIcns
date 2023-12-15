@@ -3,7 +3,7 @@ module MacIcns {
     requires javafx.swing;
     requires java.desktop;
     requires org.apache.commons.io;
-    requires imgscalr.lib;
+    requires org.glavo.png.javafx;
     requires java.prefs;
     requires JavaProc;
 

@@ -11,7 +11,6 @@ public class Shell {
                 .withNoTimeout()
                 .ignoreExitStatus()
                 .run();
-        System.out.println(r.getCommandLine());
         return r.getExitValue();
     }
 }

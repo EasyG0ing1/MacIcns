@@ -1,13 +1,12 @@
 package com.simtechdata;
 
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.glavo.png.javafx.PNGJavaFXUtils;
 
-import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -133,14 +132,15 @@ public class ProcessFile {
             this.size = size;
         }
 
+        public static WritableImage lastImage;
         private final Image original;
         private final Path path;
         private final int size;
+        private int lastSize = 0;
 
         public void saveFile() {
             try {
-                WritableImage finalImage = getImage();
-                ImageIO.write(SwingFXUtils.fromFXImage(finalImage, null), "PNG", path.toFile());
+                PNGJavaFXUtils.writeImage(getImage(), path);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -148,7 +148,22 @@ public class ProcessFile {
 
         private WritableImage getImage() {
             try {
-                return resizeImage(original, size, size);
+                WritableImage writableImage;
+                if(lastImage == null) {
+                    writableImage = resizeImage(original, size, size);
+                    lastImage = writableImage;
+                    lastSize = size;
+                }
+                else {
+                    if(size == lastSize) {
+                        writableImage = lastImage;
+                    }
+                    else {
+                        writableImage = resizeImage(lastImage, size, size);
+                        lastSize = size;
+                    }
+                }
+                return writableImage;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
