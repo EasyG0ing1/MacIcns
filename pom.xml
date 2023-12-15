@@ -59,10 +59,9 @@
         </dependency>
     </dependencies>
 
-<!--
     <build>
         <plugins>
-            &lt;!&ndash; Maven Versions &ndash;&gt;
+            <!-- Maven Versions -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
@@ -81,13 +80,13 @@
                     </execution>
                 </executions>
             </plugin>
-            &lt;!&ndash; Maven compiler plugin&ndash;&gt;
+            <!-- Maven compiler plugin-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin}</version>
             </plugin>
-            &lt;!&ndash; Maven Surefire plugin&ndash;&gt;
+            <!-- Maven Surefire plugin-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -97,7 +96,7 @@
                     <argLine>-ea</argLine>
                 </configuration>
             </plugin>
-            &lt;!&ndash; JavaFX Maven Plugin &ndash;&gt;
+            <!-- JavaFX Maven Plugin -->
             <plugin>
                 <groupId>com.zenjava</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -106,7 +105,7 @@
                     <mainClass>${mainClass}</mainClass>
                 </configuration>
             </plugin>
-            &lt;!&ndash; GluonFX GUI native image builder plugin &ndash;&gt;
+            <!-- GluonFX GUI native image builder plugin -->
             <plugin>
                 <groupId>com.gluonhq</groupId>
                 <artifactId>gluonfx-maven-plugin</artifactId>
@@ -117,11 +116,11 @@
                         <arg>${system-linker-arg}</arg>
                     </linkerArgs>
                     <nativeImageArgs>
-                        <arg>&#45;&#45;enable-url-protocols=https</arg>
-                        <arg>&#45;&#45;enable-url-protocols=http</arg>
-                        <arg>&#45;&#45;no-fallback</arg>
-                        <arg>&#45;&#45;verbose</arg>
-                        <arg>&#45;&#45;add-exports=org.graalvm.nativeimage.builder/com.oracle.svm.core.jdk=ALL-UNNAMED</arg>
+                        <arg>--enable-url-protocols=https</arg>
+                        <arg>--enable-url-protocols=http</arg>
+                        <arg>--no-fallback</arg>
+                        <arg>--verbose</arg>
+                        <arg>--add-exports=org.graalvm.nativeimage.builder/com.oracle.svm.core.jdk=ALL-UNNAMED</arg>
                         <arg>${system-native-image-arg}</arg>
                         <arg>${compatibility-arg}</arg>
                         <arg>-H:ReflectionConfigurationFiles=${project.basedir}/config/reflect-config.json</arg>
@@ -135,12 +134,12 @@
                         <packageType>${package.type}</packageType>
                         <bundleShortVersion>${project.version}</bundleShortVersion>
                         <bundleVersion>${project.version}</bundleVersion>
-                        &lt;!&ndash; for macOS/iOS &ndash;&gt;
+                        <!-- for macOS/iOS -->
                         <skipSigning>true</skipSigning>
                     </releaseConfiguration>
                 </configuration>
             </plugin>
-            &lt;!&ndash; Maven Jar plugin&ndash;&gt;
+            <!-- Maven Jar plugin-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -156,8 +155,8 @@
             </plugin>
         </plugins>
     </build>
--->
 
+<!--
     <build>
         <plugins>
             <plugin>
@@ -170,6 +169,7 @@
             </plugin>
         </plugins>
     </build>
+-->
 
     <profiles>
         <!-- [=macOS] GUI native image builder profile -->
@@ -183,11 +183,12 @@
                 <mac.app.store>true</mac.app.store>
             </properties>
         </profile>
+<!--
         <profile>
             <id>jar</id>
             <build>
                 <plugins>
-                    <!-- Maven Assembly Plugin -->
+                    &lt;!&ndash; Maven Assembly Plugin &ndash;&gt;
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-assembly-plugin</artifactId>
@@ -216,7 +217,7 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!-- Maven Surefire plugin-->
+                    &lt;!&ndash; Maven Surefire plugin&ndash;&gt;
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
@@ -224,10 +225,10 @@
                         <configuration>
                             <classpathDependencyExcludes>org.graalvm.nativeimage</classpathDependencyExcludes>
                             <argLine>-ea</argLine>
-                            <argLine>--illegal-access=permit</argLine>
+                            <argLine>&#45;&#45;illegal-access=permit</argLine>
                         </configuration>
                     </plugin>
-                    <!-- Maven JavaFX plugin-->
+                    &lt;!&ndash; Maven JavaFX plugin&ndash;&gt;
                     <plugin>
                         <groupId>com.zenjava</groupId>
                         <artifactId>javafx-maven-plugin</artifactId>
@@ -239,5 +240,6 @@
                 </plugins>
             </build>
         </profile>
+-->
     </profiles>
 </project>
