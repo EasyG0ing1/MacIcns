@@ -34,7 +34,7 @@ open /Applications/MacIcns.app --args /Users/username/Pictures/MyIcon.png
 ```
 OR
 ```Bash
-/Applications/MacIcns.app/Contents/MacOS/universalJavaApplicationStub /Users/username/Pictures/MyIcon.png
+/Applications/MacIcns.app/Contents/MacOS/MacIcns /Users/username/Pictures/MyIcon.png
 ```
 
 The program uses the filename of your image file but replaces the extension with `.icns`. If the `.icns` file already exists, the program will overwrite the file if it is being run from within Terminal. In the GUI, you will have the option of overwriting the file.
@@ -44,7 +44,7 @@ The program uses the filename of your image file but replaces the extension with
 ### GUI Mode
 If the program quits without showing that the file was created successfully (green text under the program logo), run it from within terminal using this command:
 ```Bash
-/Applications/MacIcns.app/Contents/MacOS/universalJavaApplicationStub
+/Applications/MacIcns.app/Contents/MacOS/MacIcns
 ```
 Then, try to process your image again but this time when it exits, it should kick out an error message that will help you understand why it wasn't able to process the file.
 
