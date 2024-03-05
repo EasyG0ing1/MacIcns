@@ -54,7 +54,7 @@ public class Window {
     private final double width = 750;
     private final double height = 650;
     private AnchorPane ap;
-    private static final URL frame = Window.class.getResource("/Frame2.png");
+    private static final URL frame = Window.class.getResource("/Frame.png");
     private static final URL makeFileUp = Window.class.getResource("/buttons/MakeFileUP.png");
     private static final URL makeFileDown = Window.class.getResource("/buttons/MakeFileDOWN.png");
     private static final URL loadImageUp = Window.class.getResource("/buttons/LoadImageUP.png");
@@ -66,6 +66,8 @@ public class Window {
     private static final URL logo = Window.class.getResource("/icons/Logo.png");
     private static final URL dragMoveRight = Window.class.getResource("/misc/DragToMoveRight.png");
     private static final URL dragMoveLeft = Window.class.getResource("/misc/DragToMoveLeft.png");
+    private static final URL startHere = Window.class.getResource("/misc/StartHere.png");
+    private static final URL lastAccessed = Window.class.getResource("/misc/LastFolderAccessed.png");
 
     private static final Image imgFrame = new Image(frame.toExternalForm());
     private static final Image imgMakeFileUp = new Image(makeFileUp.toExternalForm());
@@ -79,9 +81,13 @@ public class Window {
     private static final Image imgLogo = new Image(logo.toExternalForm());
     private static final Image imgDragRight = new Image(dragMoveRight.toExternalForm());
     private static final Image imgDragLeft = new Image(dragMoveLeft.toExternalForm());
+    private static final Image imgStartHere = new Image(startHere.toExternalForm());
+    private static final Image imgLastAccessed = new Image(lastAccessed.toExternalForm());
 
     private ImageView ivDragLeft;
     private ImageView ivDragRight;
+    private ImageView ivStartHere;
+    private ImageView ivLastAccessed;
     private ImageView ivMakeFile;
     private ImageView ivLoadImage;
     private ImageView ivClose;
@@ -124,7 +130,7 @@ public class Window {
 
         ap = newAnchorPane(imgFrame);
         textResults   = newText("", Fonts.Lato_Black(20), Color.GREENYELLOW, 1.0, true);
-        textFinalPath = newText("/Users/michael/temp/icons",Fonts.Lato_Black(20), Color.YELLOW, 1.0, true);
+        textFinalPath = newText(AppSettings.get.folder(),Fonts.Lato_Black(20), Color.YELLOW, 1.0, true);
         textFileLabel = newText("File: ",Fonts.Fira_Code_Regular(20), Color.WHITE, 1.0, true);
         textPathLabel = newText("Path: ",Fonts.Fira_Code_Regular(20), Color.WHITE, 1.0, true);
         textICNSLabel = newText("ICNS: ",Fonts.Fira_Code_Regular(20), Color.WHITE, 1.0, true);
@@ -133,32 +139,38 @@ public class Window {
         textPath      = newText("",Fonts.Fira_Code_Regular(13), Color.WHITE, 1.0, false);
         text3         = newText("\n",Fonts.Fira_Code_Regular(22), Color.WHITE, 1.0, false);
         text4         = newText("\n",Fonts.Fira_Code_Regular(18), Color.WHITE, 1.0, false);
-        ivDragLeft = newImageView(imgDragLeft, null, 180, null);
-        ivDragRight = newImageView(imgDragRight,null,180,null);
-        ivMakeFile = newImageView(imgMakeFileUp, imgMakeFileDown, 180,e-> Platform.runLater(this::createFile));
-        ivLoadImage = newImageView(Colors.overlay(imgLoadImageUp, GREEN), Colors.overlay(imgLoadImageDown, GREEN),180, e -> Platform.runLater(this::loadFile));
-        ivClose = newImageView(imgCloseUp, imgCloseDown, 180, e-> Platform.runLater(this::close));
-        ivView = newImageView(Colors.overlay(imgViewUp, GREEN), Colors.overlay(imgViewDown, GREEN), 250, e-> Platform.runLater(this::openPreview));
+        ivDragLeft    = newImageView(imgDragLeft, null, 180, null);
+        ivDragRight   = newImageView(imgDragRight,null,180,null);
+        ivStartHere   = newImageView(imgStartHere,null,180,null);
+        ivLastAccessed= newImageView(imgLastAccessed,null,325,null);
+        ivMakeFile    = newImageView(imgMakeFileUp, imgMakeFileDown, 180,e-> Platform.runLater(this::createFile));
+        ivLoadImage   = newImageView(Colors.overlay(imgLoadImageUp, GREEN), Colors.overlay(imgLoadImageDown, GREEN),180, e -> Platform.runLater(this::loadFile));
+        ivClose       = newImageView(imgCloseUp, imgCloseDown, 180, e-> Platform.runLater(this::close));
+        ivView        = newImageView(Colors.overlay(imgViewUp, GREEN), Colors.overlay(imgViewDown, GREEN), 250, e-> Platform.runLater(this::openPreview));
         ivView.setVisible(false);
+        
         ImageView ivTitle = newImageView(imgLogo,null,200, null);
         textDirections = newText("Click Load Image and select a 1024 x 1024 image file\n", Fonts.Lato_Heavy(24), Color.WHITE, 1.0, true);
         HBox boxButtons = newHBox(25, Pos.CENTER, new Insets(5), ivLoadImage, ivMakeFile, ivClose);
         finalText = showFinalText();
-        vbox = newVBox(10, Pos.CENTER, new Insets(10,10,45,10), ivTitle, textResults, textDirections, finalText);
+        vbox = newVBox(10, Pos.CENTER, new Insets(10,10,45,10), textResults, textDirections, finalText);
         vbox.setPrefSize(width * .95, height * .9);
         finalText.setVisible(false);
         vbox.setFillWidth(true);
         vbox.setPrefWidth(width);
         VBox boxTest = newVBox(0, Pos.CENTER, new Insets(0), textFinalPath);
-        ap.getChildren().add(vbox);
+        addNode(vbox, 10,350,10,150);
+        addNode(ivTitle, (width / 2) -108, 40, (width/2),-1);
         addNode(boxButtons, 0, -1, 0, 20);
-        addNode(ivView, -1, ((height / 2) + 35), ((width / 2) - 125), -1);
+        addNode(ivView, -1, ((height / 2) + 15), ((width / 2) - 125), -1);
         addNode(boxTest, 0, ((height / 2) + 140), 0, -1);
         addNode(ivDragLeft, 25, 65, -1, -1);
         addNode(ivDragRight, -1, 65, 25, -1);
+        addNode(ivStartHere, 20, -1, -1, 100);
+        addNode(ivLastAccessed, -1, -1, 155, 195);
         ap.setOnMouseDragged(e -> mouseDragged(e, .15));
         ap.setOnMousePressed(this::mousePressed);
-    }
+   }
 
     private AnchorPane newAnchorPane(Image backImage){
         ImageView iv = new ImageView(backImage);
@@ -168,8 +180,24 @@ public class Window {
         AnchorPane.setTopAnchor(iv,0.0);
         AnchorPane.setBottomAnchor(iv,0.0);
         ap.setPrefWidth(width);
+        ap.setMinWidth(width);
+        ap.setMaxWidth(width);
         ap.setPrefHeight(height);
+        ap.setMinHeight(height);
+        ap.setMaxHeight(height);
         return ap;
+    }
+
+    private void fadeDirections() {
+        if(textDirections.getOpacity() > 0.1) {
+            new Thread(() -> {
+                for (double x = 1.0; x >= 0 ; x-=.01) {
+                    double op = x;
+                    Platform.runLater(() -> textDirections.setOpacity(op));
+                    sleep(25);
+                }
+            }).start();
+        }
     }
     private void addNode(Node node, double left, double top, double right, double bottom) {
         ap.getChildren().add(node);
@@ -270,6 +298,10 @@ public class Window {
     }
 
     private void createFile() {
+        if(!fileLoaded) {
+            Platform.runLater(() -> new Dialog("Problem: " + "No png file loaded"));
+            return;
+        }
         new Thread(() -> {
             Response response = new ProcessFile(fileChosen, true).run();
             if (response.isSuccess()) {
@@ -286,8 +318,8 @@ public class Window {
                 setImages(ivMakeFile, imgMakeFileUp, imgMakeFileDown);
             }
             else {
-                String message = response.getMessage();
-                new Dialog("Problem: " + message);
+                String message = response.getMessage().isEmpty() ? "No png file selected" : response.getMessage();
+                Platform.runLater(() -> new Dialog("Problem: " + message));
             }
         }).start();
     }
@@ -303,10 +335,6 @@ public class Window {
     }
 
     private void loadFile() {
-        Platform.runLater(() -> {
-            ivView.setVisible(false);
-            textFinalPath.setVisible(false);
-        });
         FileChooser fc = new FileChooser();
         File startFolder = getFolder();
         if (!startFolder.exists()) {
@@ -315,12 +343,17 @@ public class Window {
         fc.setInitialDirectory(startFolder);
         File file = fc.showOpenDialog(null);
         if (file != null) {
+            Platform.runLater(() -> {
+                ivView.setVisible(false);
+                textFinalPath.setVisible(false);
+            });
             setImages(ivMakeFile, imgMakeFileUp, imgMakeFileDown);
             setFolder(file.getParentFile());
             if (ImageChecker.isValid(file)) {
                 fileChosen = file.toPath();
                 if (imageOK()) {
                     clearText();
+                    fadeDirections();
                     String rootPath = file.getParent();
                     setColor(text3, Color.WHITE, false);
                     setColor(text4, Color.WHITE, false);
@@ -416,12 +449,14 @@ public class Window {
 
     private void fadeThread() {
         new Thread(() -> {
-            sleep(2500);
+            sleep(3500);
             for (double x = 1.0; x >= 0.0; x -= .01) {
                 final double opacity = x;
-                Platform.runLater(() -> {
+               Platform.runLater(() -> {
                     ivDragLeft.setOpacity(opacity);
                     ivDragRight.setOpacity(opacity);
+                    ivStartHere.setOpacity(opacity);
+                    ivLastAccessed.setOpacity(opacity);
                 });
                 sleep(30);
             }

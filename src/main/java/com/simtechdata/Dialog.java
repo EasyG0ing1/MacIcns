@@ -44,10 +44,28 @@ public class Dialog {
     private final double width = 471;
     private final double height = 231;
     private AnchorPane ap;
+    private static final URL DialogFrame = Window.class.getResource("/Dialog.png");
     private static final URL OKUp = Window.class.getResource("/buttons/OkUP.png");
     private static final URL OKDown = Window.class.getResource("/buttons/OkDOWN.png");
+    private static final Image imgFrame = new Image(DialogFrame.toExternalForm());
     private static final Image imgOKUp = new Image(OKUp.toExternalForm());
     private static final Image imgOKDown = new Image(OKDown.toExternalForm());
+
+    private       double       xx    , yy;
+
+    private void mouseDragged(MouseEvent event, double topAreaRatio) {
+        if(yy <= height * topAreaRatio) {
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setX(event.getScreenX() - xx);
+            stage.setY(event.getScreenY() - yy);
+        }
+    }
+
+    private void mousePressed(MouseEvent event) {
+        xx = event.getSceneX();
+        yy = event.getSceneY();
+    }
+
 
     private ImageView ivOK;
     private Text textMessage;
@@ -56,12 +74,22 @@ public class Dialog {
     private void makeControls() {
         ap = new AnchorPane();
         ap.setPrefWidth(width);
+        ap.setMinWidth(width);
+        ap.setMaxWidth(width);
         ap.setPrefHeight(height);
+        ap.setMinHeight(height);
+        ap.setMaxHeight(height);
+        ImageView ivBack = new ImageView(imgFrame);
+        ivBack.setPreserveRatio(true);
+        ivBack.setFitWidth(width);
+        addNode(ivBack,0,0,0,0);
         textMessage = newText(message, Fonts.Lato_Black(19), Color.YELLOW, 1.0, true);
         textMessage.setWrappingWidth(395);
         ivOK = newImageView(imgOKUp, imgOKDown, 180, e-> Platform.runLater(this::close));
         VBox vbox = newVBox(55, Pos.CENTER, new Insets(0), textMessage, ivOK);
         addNode(vbox, 10, 10, 10, 10);
+        ap.setOnMouseDragged(e -> mouseDragged(e, .15));
+        ap.setOnMousePressed(this::mousePressed);
     }
 
     private Text newText(String msg, Font font, Color color, double lineSpacing, boolean bold) {
