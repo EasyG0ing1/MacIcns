@@ -17,7 +17,7 @@ Valid image types are:
 
 ### Using the program
 
-[Video Demo](https://youtu.be/ZJuk7e1mZ9I)
+[<img src="img/VideoThumb.png" width="100%">](https://www.youtube.com/watch?v=ZJuk7e1mZ9I)
 
 It's fairly simple, grab [the latest version](https://github.com/EasyG0ing1/MacIcns/releases/latest) from Releases at the right and download the program and install it.
 
