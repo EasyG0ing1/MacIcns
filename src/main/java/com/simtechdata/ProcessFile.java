@@ -1,11 +1,10 @@
 package com.simtechdata;
 
+import com.simtechdata.build.Job;
+import com.simtechdata.build.Selections;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
-import javafx.scene.paint.Color;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.glavo.png.javafx.PNGJavaFXUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,16 +16,18 @@ import java.util.Map;
 
 public class ProcessFile {
 
-    public ProcessFile(Path selectedImageFile, boolean inWindow) {
+    public ProcessFile(Path selectedImageFile, Selections selections) {
         this.selectedImageFile = selectedImageFile;
-        this.inWindow = inWindow;
+        this.selections = selections;
     }
 
     private final Path selectedImageFile;
-    private final boolean inWindow;
+    private final Selections selections;
 
     public Response run() {
-        return processFile();
+        if(selections == null)
+            return processFileShell();
+        return processFileGUI();
     }
 
     private static String icnsFilePath;
@@ -35,7 +36,56 @@ public class ProcessFile {
         return icnsFilePath;
     }
 
-    private Response processFile() {
+    private Response processFileGUI() {
+        Response response = new Response();
+        if (selectedImageFile != null) {
+            Map<Integer, Job> jobMap = selections.getJobMap();
+            if(jobMap == null) {
+                System.out.println("NULL");
+                System.exit(0);
+            }
+            try {
+                File file = selectedImageFile.toFile();
+                Image original = new Image(file.toURI().toString());
+                double width = original.getWidth();
+                double height = original.getHeight();
+                String msg;
+                if (!ImageChecker.isValid(file)) {
+                    msg = "Specified file is not a valid image type.\nMust be: PNG, JPEG, GIF, TIFF, BMP or SVG";
+                    response.set(false, msg);
+                    return response;
+                }
+                if (width != 1024 || height != 1024) {
+                    msg = "Specified image is not 1024 x 1024 in size";
+                    response.set(false, msg);
+                    return response;
+                }
+                if(selections.makeParentFolder()) {
+                    for (int index : jobMap.keySet()) {
+                        jobMap.get(index).saveFile();
+                    }
+                    int exitCode = new Run(selections.getIconFolder(), selections.getIcnsFilePath()).run();
+                    if (exitCode != 0) {
+                        response.set(false, "Error occurred while running the icon creation process");
+                    }
+                    else {
+                        FileUtils.deleteDirectory(selections.getIconFolder().toFile());
+                        response.set(true, "");
+                    }
+                }
+                else {
+                    msg = "Could not create the icon workspace folder, permission issue?";
+                    response.set(false, msg);
+                }
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return response;
+    }
+
+    private Response processFileShell() {
         Response response = new Response();
         if (selectedImageFile != null) {
             String folder = selectedImageFile.toFile().getParentFile().getAbsolutePath();
@@ -43,16 +93,18 @@ public class ProcessFile {
             String iconFilename = FilenameUtils.getBaseName(selectedImageFile.toString()) + ".icns";
             Path icnsFile = Paths.get(folder, iconFilename);
             icnsFilePath = icnsFile.toAbsolutePath().toString();
-            Path Image01 = Paths.get(iconFolder.toString(), "icon_512x512@2x.png");
-            Path Image02 = Paths.get(iconFolder.toString(), "icon_512x512.png");
-            Path Image03 = Paths.get(iconFolder.toString(), "icon_256x256@2x.png");
-            Path Image04 = Paths.get(iconFolder.toString(), "icon_256x256.png");
-            Path Image05 = Paths.get(iconFolder.toString(), "icon_128x128@2x.png");
-            Path Image06 = Paths.get(iconFolder.toString(), "icon_128x128.png");
-            Path Image07 = Paths.get(iconFolder.toString(), "icon_32x32@2x.png");
-            Path Image08 = Paths.get(iconFolder.toString(), "icon_32x32.png");
-            Path Image09 = Paths.get(iconFolder.toString(), "icon_16x16@2x.png");
-            Path Image10 = Paths.get(iconFolder.toString(), "icon_16x16.png");
+            Path Image01 = Paths.get(iconFolder.toString(), "icon_512x512@2x.png"); //01
+            Path Image02 = Paths.get(iconFolder.toString(), "icon_512x512.png"); //02
+            Path Image03 = Paths.get(iconFolder.toString(), "icon_256x256@2x.png"); //03
+            Path Image04 = Paths.get(iconFolder.toString(), "icon_256x256.png"); //04
+            Path Image05 = Paths.get(iconFolder.toString(), "icon_128x128@2x.png"); //05
+            Path Image06 = Paths.get(iconFolder.toString(), "icon_128x128.png"); //06
+            Path Image07 = Paths.get(iconFolder.toString(), "icon_64x64@2x.png"); //07
+            Path Image08 = Paths.get(iconFolder.toString(), "icon_64x64.png"); //08
+            Path Image09 = Paths.get(iconFolder.toString(), "icon_32x32@2x.png"); //09
+            Path Image10 = Paths.get(iconFolder.toString(), "icon_32x32.png"); //10
+            Path Image11 = Paths.get(iconFolder.toString(), "icon_16x16@2x.png"); //11
+            Path Image12 = Paths.get(iconFolder.toString(), "icon_16x16.png"); //12
 
             Map<Integer, Job> jobMap = new HashMap<>();
 
@@ -64,21 +116,13 @@ public class ProcessFile {
                 String msg;
                 if (!ImageChecker.isValid(file)) {
                     msg = "Specified file is not a valid image type.\nMust be: PNG, JPEG, GIF, TIFF, BMP or SVG";
-                    if (!inWindow) {
-                        System.out.println(msg);
-                        System.exit(0);
-                    }
-                    response.set(false, msg);
-                    return response;
+                    System.out.println(msg);
+                    System.exit(0);
                 }
                 if (width != 1024 || height != 1024) {
                     msg = "Specified image is not 1024 x 1024 in size";
-                    if (!inWindow) {
-                        System.out.println(msg);
-                        System.exit(0);
-                    }
-                    response.set(false, msg);
-                    return response;
+                    System.out.println(msg);
+                    System.exit(0);
                 }
                 if (FileUtils.createParentDirectories(Image01.toFile()).exists()) {
                     jobMap.put(1, new Job(original, Image01, 1024));
@@ -87,10 +131,12 @@ public class ProcessFile {
                     jobMap.put(4, new Job(original, Image04, 256));
                     jobMap.put(5, new Job(original, Image05, 256));
                     jobMap.put(6, new Job(original, Image06, 128));
-                    jobMap.put(7, new Job(original, Image07, 64));
-                    jobMap.put(8, new Job(original, Image08, 32));
-                    jobMap.put(9, new Job(original, Image09, 32));
-                    jobMap.put(10, new Job(original, Image10, 16));
+                    jobMap.put(7, new Job(original, Image07, 128));
+                    jobMap.put(8, new Job(original, Image08, 64));
+                    jobMap.put(9, new Job(original, Image09, 64));
+                    jobMap.put(10, new Job(original, Image10, 32));
+                    jobMap.put(11, new Job(original, Image11, 32));
+                    jobMap.put(12, new Job(original, Image12, 16));
 
                     for (int index : jobMap.keySet()) {
                         jobMap.get(index).saveFile();
@@ -102,88 +148,23 @@ public class ProcessFile {
                     }
                     else {
                         FileUtils.forceDeleteOnExit(iconFolder.toFile());
-                        if (!inWindow) {
-                            System.out.println("Icon file created: " + icnsFile);
-                            System.exit(0);
-                        }
+                        System.out.println("Icon file created: " + icnsFile);
+                        System.exit(0);
                         response.set(true, "");
                     }
                 }
                 else {
                     msg = "Could not create the icon workspace folder, permission issue?";
-                    response.set(false, msg);
-                    if (!inWindow) {
-                        System.out.println(msg);
-                        System.exit(0);
-                    }
+                    System.out.println(msg);
+                    System.exit(0);
                 }
-            } catch (IOException e) {
-                System.err.println("There was an error. If the following information does not help you figure out the problem, copy and paste the text below the line and create an issue on https://github.com/EasyG0ing1/MacIcns\n---------------------------------------------------------------\nProcessFile.processFile()\n\n");
+            }
+            catch (IOException e) {
+                System.err.println("There was an error. If the following information does not help you figure out the problem, copy and paste the text below the line and create an issue on https://github.com/EasyG0ing1/MacIcns\n---------------------------------------------------------------\nProcessFile.processFileShell()\n\n");
                 throw new RuntimeException(e);
             }
         }
         return response;
-    }
-
-    private static class Job {
-        public Job(Image original, Path path, int size) {
-            this.original = original;
-            this.path = path;
-            this.size = size;
-        }
-
-        public static WritableImage lastImage;
-        private final Image original;
-        private final Path path;
-        private final int size;
-        private int lastSize = 0;
-
-        public void saveFile() {
-            try {
-                PNGJavaFXUtils.writeImage(getImage(), path);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        private WritableImage getImage() {
-            try {
-                WritableImage writableImage;
-                if(lastImage == null) {
-                    writableImage = resizeImage(original, size, size);
-                    lastImage = writableImage;
-                    lastSize = size;
-                }
-                else {
-                    if(size == lastSize) {
-                        writableImage = lastImage;
-                    }
-                    else {
-                        writableImage = resizeImage(lastImage, size, size);
-                        lastSize = size;
-                    }
-                }
-                return writableImage;
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        private WritableImage resizeImage(Image originalImage, int targetWidth, int targetHeight) {
-            int width = (int) originalImage.getWidth();
-            int height = (int) originalImage.getHeight();
-
-            WritableImage resizedImage = new WritableImage(targetWidth, targetHeight);
-            for (int x = 0; x < targetWidth; x++) {
-                for (int y = 0; y < targetHeight; y++) {
-                    double sourceX = x * width / (double) targetWidth;
-                    double sourceY = y * height / (double) targetHeight;
-                    Color color = originalImage.getPixelReader().getColor((int) sourceX, (int) sourceY);
-                    resizedImage.getPixelWriter().setColor(x, y, color);
-                }
-            }
-            return resizedImage;
-        }
     }
 
 }

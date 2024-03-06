@@ -111,7 +111,7 @@
   <properties>
     <maven.compiler.release>20</maven.compiler.release>
     <versions-maven-plugin>2.16.2</versions-maven-plugin>
-    <mainClass>com.simtechdata.Main</mainClass>
+    <mainClass>com.simtechdata.MainGUI</mainClass>
     <maven-surefire-plugin>3.2.2</maven-surefire-plugin>
     <native-maven-plugin>0.9.28</native-maven-plugin>
     <javapackager>1.7.2</javapackager>

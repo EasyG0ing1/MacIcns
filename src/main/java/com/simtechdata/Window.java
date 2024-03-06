@@ -1,9 +1,12 @@
 package com.simtechdata;
 
+import com.simtechdata.build.Selections;
 import com.simtechdata.fonts.Fonts;
 import com.simtechdata.settings.AppSettings;
 import com.simtechdata.utils.Colors;
 import com.simtechdata.utils.Shell;
+import com.simtechdata.build.CheckBox;
+import com.simtechdata.build.CheckBoxs;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -107,7 +110,9 @@ public class Window {
     private Text text4;
     private Path fileChosen;
     private VBox finalText;
+    private HBox checkBoxes;
     private boolean fileLoaded = false;
+    private Selections selections;
     private       double       xx    , yy;
 
     private void mouseDragged(MouseEvent event, double topAreaRatio) {
@@ -158,6 +163,8 @@ public class Window {
         finalText.setVisible(false);
         vbox.setFillWidth(true);
         vbox.setPrefWidth(width);
+        checkBoxes = getCheckBoxes();
+        checkBoxes.setVisible(false);
         VBox boxTest = newVBox(0, Pos.CENTER, new Insets(0), textFinalPath);
         addNode(vbox, 10,350,10,150);
         addNode(ivTitle, (width / 2) -108, 40, (width/2),-1);
@@ -168,6 +175,7 @@ public class Window {
         addNode(ivDragRight, -1, 65, 25, -1);
         addNode(ivStartHere, 20, -1, -1, 100);
         addNode(ivLastAccessed, -1, -1, 155, 195);
+        addNode(checkBoxes, 20, 285, 20, -1);
         ap.setOnMouseDragged(e -> mouseDragged(e, .15));
         ap.setOnMousePressed(this::mousePressed);
    }
@@ -188,17 +196,6 @@ public class Window {
         return ap;
     }
 
-    private void fadeDirections() {
-        if(textDirections.getOpacity() > 0.1) {
-            new Thread(() -> {
-                for (double x = 1.0; x >= 0 ; x-=.01) {
-                    double op = x;
-                    Platform.runLater(() -> textDirections.setOpacity(op));
-                    sleep(25);
-                }
-            }).start();
-        }
-    }
     private void addNode(Node node, double left, double top, double right, double bottom) {
         ap.getChildren().add(node);
         if(left != -1)
@@ -210,6 +207,7 @@ public class Window {
         if(bottom != -1)
             AnchorPane.setBottomAnchor(node, bottom);
     }
+
     private void addNode(HBox box, double left, double top, double right, double bottom) {
         ap.getChildren().add(box);
         if(left != -1)
@@ -221,6 +219,7 @@ public class Window {
         if(bottom != -1)
             AnchorPane.setBottomAnchor(box, bottom);
     }
+
     private void addNode(VBox box, double left, double top, double right, double bottom) {
         ap.getChildren().add(box);
         if(left != -1)
@@ -232,6 +231,7 @@ public class Window {
         if(bottom != -1)
             AnchorPane.setBottomAnchor(box, bottom);
     }
+
     private Text newText(String msg, Font font, Color color, double lineSpacing, boolean bold) {
         Text text = new Text(msg);
         text.setFont(font);
@@ -240,6 +240,7 @@ public class Window {
         text.setFill(color);
         return text;
     }
+
     private ImageView newImageView(Image up, Image down, double size, EventHandler<? super MouseEvent> mouseClicked) {
         ImageView iv = new ImageView(up);
         if (down != null) {
@@ -253,18 +254,21 @@ public class Window {
         iv.setFitWidth(size);
         return iv;
     }
+
     private HBox newHBox(double spacing, Pos alignment, Insets padding, Node... nodes) {
         HBox box = new HBox(spacing, nodes);
         box.setAlignment(alignment);
         box.setPadding(padding);
         return box;
     }
+
     private VBox newVBox(double spacing, Pos alignment, Insets padding, Node... nodes) {
         VBox box = new VBox(spacing, nodes);
         box.setAlignment(alignment);
         box.setPadding(padding);
         return box;
     }
+
     private void setImages(ImageView iv, Image up, Image down) {
         iv.setImage(up);
         iv.setOnMousePressed(e -> iv.setImage(down));
@@ -303,7 +307,11 @@ public class Window {
             return;
         }
         new Thread(() -> {
-            Response response = new ProcessFile(fileChosen, true).run();
+            File file = selections.getIcnsFilePath().toFile();
+            if(file.exists()) {
+                file.delete();
+            }
+            Response response = new ProcessFile(fileChosen, selections).run();
             if (response.isSuccess()) {
                 final String msg = "File created successfully!";
                 Platform.runLater(() -> {
@@ -313,6 +321,7 @@ public class Window {
                     textResults.setText(msg);
                     ivView.setVisible(true);
                     textFinalPath.setVisible(true);
+                    checkBoxes.setVisible(false);
                 });
                 fileLoaded = false;
                 setImages(ivMakeFile, imgMakeFileUp, imgMakeFileDown);
@@ -323,6 +332,7 @@ public class Window {
             }
         }).start();
     }
+
     private String getNewStyle(String color, boolean bold) {
         StringBuilder style = new StringBuilder();
         style.append(bold ? "-fx-font-weight: bold;"   : "");
@@ -342,7 +352,7 @@ public class Window {
         }
         fc.setInitialDirectory(startFolder);
         File file = fc.showOpenDialog(null);
-        if (file != null) {
+        if (file != null && ImageChecker.isValid(file)) {
             Platform.runLater(() -> {
                 ivView.setVisible(false);
                 textFinalPath.setVisible(false);
@@ -351,55 +361,71 @@ public class Window {
             setFolder(file.getParentFile());
             if (ImageChecker.isValid(file)) {
                 fileChosen = file.toPath();
-                if (imageOK()) {
-                    clearText();
-                    fadeDirections();
-                    String rootPath = file.getParent();
-                    setColor(text3, Color.WHITE, false);
-                    setColor(text4, Color.WHITE, false);
-                    textFilename.setText(file.getName());
-                    textPath.setText(rootPath);
-                    String baseName = FilenameUtils.getBaseName(file.getAbsolutePath());
-                    String iconFileName = baseName + ".icns";
-                    textICNSName.setText(iconFileName);
-                    Path destinationFile = Paths.get(rootPath, iconFileName);
-                    if (destinationFile.toFile().exists()) {
-                        setLabels();
-                        text3.setText("ICNS file already exists");
-                        text3.setFill(Color.YELLOW);
-                        text3.setFont(Fonts.Fira_Code_Regular(20));
-                        text3.setFont(Fonts.Fira_Code_Regular(18));
-                        text4.setFont(Fonts.Fira_Code_Bold(18));
-                        text4.setText("Clicking on Make File will overwrite the file");
-                        text4.setFill(Color.rgb(255, 255, 0));
-                        setImages(ivMakeFile, Colors.overlay(imgMakeFileUp, RED), Colors.overlay(imgMakeFileDown, RED));
-                    }
-                    else {
-                        setLabels();
-                        text3.setText("Click Make File to create the ICNS file");
-                        text3.setFill(Color.YELLOW);
-                        text3.setFont(Fonts.Fira_Code_Regular(22));
-                        text4.setText("");
-                        setImages(ivMakeFile, Colors.overlay(imgMakeFileUp, GREEN), Colors.overlay(imgMakeFileDown, GREEN));
-                    }
-                    fileLoaded = true;
-                    setImages(ivLoadImage, imgLoadImageUp, imgLoadImageDown);
+                selections = new Selections(fileChosen);
+                CheckBoxs.reset();
+                clearText();
+                textDirections.setVisible(false);
+                checkBoxes.setVisible(true);
+                checkBoxes.toFront();
+                String rootPath = file.getParent();
+                setColor(text3, Color.WHITE, false);
+                setColor(text4, Color.WHITE, false);
+                textFilename.setText(file.getName());
+                textPath.setText(rootPath);
+                String baseName = FilenameUtils.getBaseName(file.getAbsolutePath());
+                String iconFileName = baseName + ".icns";
+                textICNSName.setText(iconFileName);
+                Path destinationFile = Paths.get(rootPath, iconFileName);
+                if (destinationFile.toFile().exists()) {
+                    setLabels();
+                    text3.setText("ICNS file already exists");
+                    text3.setFill(Color.YELLOW);
+                    text3.setFont(Fonts.Fira_Code_Regular(20));
+                    text3.setFont(Fonts.Fira_Code_Regular(18));
+                    text4.setFont(Fonts.Fira_Code_Bold(18));
+                    text4.setText("Clicking on Make File will overwrite the file");
+                    text4.setFill(Color.rgb(255, 255, 0));
+                    setImages(ivMakeFile, Colors.overlay(imgMakeFileUp, RED), Colors.overlay(imgMakeFileDown, RED));
                 }
                 else {
-                    if (!fileLoaded)
-                        clearLabels();
-                    new Dialog("Selected file is not 1024 x 1024 pixels");
+                    setLabels();
+                    text3.setText("Click Make File to create the ICNS file");
+                    text3.setFill(Color.YELLOW);
+                    text3.setFont(Fonts.Fira_Code_Regular(22));
+                    text4.setText("");
+                    setImages(ivMakeFile, Colors.overlay(imgMakeFileUp, GREEN), Colors.overlay(imgMakeFileDown, GREEN));
                 }
-            }
-            else {
-                if (!fileLoaded)
-                    clearLabels();
-                String message = "Selected file is not a valid image type" + "\n";
-                message += "Must be: PNG, JPEG, GIF, TIFF, BMP or SVG";
-                new Dialog(message);
+                fileLoaded = true;
+                setImages(ivLoadImage, imgLoadImageUp, imgLoadImageDown);
             }
             finalText.setVisible(true);
         }
+        else {
+            String message = "Selected file is either null," + "\n";
+            message += "not 1024 x 1024 in size OR is not one of these\n";
+            message += "formats: PNG, JPEG, GIF, TIFF, BMP or SVG";
+            new Dialog(message);
+        }
+    }
+
+    private HBox getCheckBoxes() {
+        CheckBox cb512 = CheckBoxs.getCheckbox(512);
+        CheckBox cb256 = CheckBoxs.getCheckbox(256);
+        CheckBox cb128 = CheckBoxs.getCheckbox(128);
+        CheckBox cb64  = CheckBoxs.getCheckbox(64);
+        CheckBox cb32  = CheckBoxs.getCheckbox(32);
+        CheckBox cb16  = CheckBoxs.getCheckbox(16);
+        cb512.setOnAction((observable, oldValue, newValue) -> selections.setI512(newValue));
+        cb256.setOnAction((observable, oldValue, newValue) -> selections.setI256(newValue));
+        cb128.setOnAction((observable, oldValue, newValue) -> selections.setI128(newValue));
+        cb64.setOnAction((observable, oldValue, newValue) -> selections.setI64(newValue));
+        cb32.setOnAction((observable, oldValue, newValue) -> selections.setI32(newValue));
+        cb16.setOnAction((observable, oldValue, newValue) -> selections.setI16(newValue));
+        HBox top = new HBox(0, cb512.getIv(), cb256.getIv(), cb128.getIv(), cb64.getIv(), cb32.getIv(), cb16.getIv());
+
+        top.setAlignment(Pos.CENTER);
+        top.setPadding(new Insets(5));
+        return top;
     }
 
     private void clearText() {
@@ -412,7 +438,7 @@ public class Window {
     }
 
     private void openPreview() {
-        File file = new File(ProcessFile.getIcnsFilePath());
+        File file = selections.getIcnsFilePath().toFile();
         if (file.exists()) {
             String openPath = file.getAbsolutePath();
             String[] args = new String[]{"-a", "Preview", openPath};
@@ -425,13 +451,6 @@ public class Window {
             String message = "File does not exist: " + filePath;
             new Dialog(message);
         }
-    }
-
-    private boolean imageOK() {
-        Image image = new Image(fileChosen.toUri().toString());
-        double imgWidth = image.getWidth();
-        double imgHeight = image.getHeight();
-        return imgWidth == 1024.0 && imgHeight == 1024.0;
     }
 
     private void setFolder(File folder) {
@@ -449,7 +468,7 @@ public class Window {
 
     private void fadeThread() {
         new Thread(() -> {
-            sleep(3500);
+            sleep(2500);
             for (double x = 1.0; x >= 0.0; x -= .01) {
                 final double opacity = x;
                Platform.runLater(() -> {

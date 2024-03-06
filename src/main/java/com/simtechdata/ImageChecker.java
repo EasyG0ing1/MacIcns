@@ -1,5 +1,7 @@
 package com.simtechdata;
 
+import javafx.scene.image.Image;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,7 +15,10 @@ public class ImageChecker {
             int bytesRead = fis.read(header);
             if (bytesRead >= 8) {
                 if (isPNG(header) || isJPEG(header) || isGIF(header) || isTIFF(header) || isBMP(header) || isSVG(file)) {
-                    return true;
+                    Image image = new Image(file.toPath().toUri().toString());
+                    double imgWidth = image.getWidth();
+                    double imgHeight = image.getHeight();
+                    return imgWidth == 1024.0 && imgHeight == 1024.0;
                 }
             }
         } catch (IOException e) {

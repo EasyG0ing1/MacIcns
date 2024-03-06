@@ -53,6 +53,8 @@ Then, try to process your image again but this time when it exits, it should kic
 The program takes your 1024 x 1024 image file and it creates a folder where it then converts your image into the different sizes that are needed for the final `.icns` file. Then it calls `iconutil` to do the conversion. It will use the original name of your file but it will have `.icns` as the extension name and it will drop it into the same folder that your selected image file resides in.
 
 ## Updates
+* 1.5.0
+  * Added ability to chose which resolutions go into the icns file in the GUI.
 * 1.4.0
   * Facelift - along with major functionality enhancements
 * 1.3.2

@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 
-public class Main extends Application {
+public class MainGUI extends Application {
 
     private static Path mainPath;
 
@@ -19,7 +19,7 @@ public class Main extends Application {
         }
         if (mainPath != null) {
             if (mainPath.toFile().exists()) {
-                new ProcessFile(mainPath, false).run();
+                new ProcessFile(mainPath,null).run();
             }
             else {
                 System.out.println("No file exists at this path: " + args[0]);
