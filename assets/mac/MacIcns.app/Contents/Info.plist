@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleVersion</key>
+	<string>1.5.0</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.simtechdata.MainGUI</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.5.0</string>
+	<key>CFBundleExecutable</key>
+	<string>MacIcns</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon.icns</string>
+	<key>CFBundleFileName</key>
+	<string>AppIcon</string>
+	<key>CFBundleName</key>
+	<string>MacIcns</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.utilities</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.11</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<true/>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<key>DTPlatformName</key>
+	<string>macosx</string>
+	<key>DTSDKName</key>
+	<string>macosx13.1</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>MacOSX</string>
+	</array>
+	<key>DTPlatformVersion</key>
+	<string>13.1</string>
+	<key>DTPlatformBuild</key>
+	<string>22C55</string>
+	<key>DTSDKBuild</key>
+	<string>22C55</string>
+	<key>DTXcode</key>
+	<string>1420</string>
+	<key>DTXcodeBuild</key>
+	<string>14C18</string>
+	<key>BuildMachineOSBuild</key>
+	<string>20A241133</string>
+</dict>
+</plist>

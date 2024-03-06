@@ -17,6 +17,8 @@ Valid image types are:
 
 ### Using the program
 
+[Video Demo](https://youtu.be/ZJuk7e1mZ9I)
+
 It's fairly simple, grab [the latest version](https://github.com/EasyG0ing1/MacIcns/releases/latest) from Releases at the right and download the program and install it.
 
 You can use it in either of two ways. If you launch the program without passing in a path to your png file, it will launch the GUI where you can select the file then convert it.
